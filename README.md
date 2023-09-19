@@ -2,6 +2,41 @@
 
 A repo of simple molecular dynamics simulations of small proteins with GROMACS.
 
+## Overview
+
+This repo contains scripts to: 
+- Perform energy minimization
+- Solvate the protein
+- Add ions to neutralize the system
+- Equilibrate the system (NVT)
+- Equilibrate the system (NPT)
+- Run a production simulation
+- Post-process the simulation
+of a mini-protein using GROMACS.
+
+In this repo, we consider a "mini-protein" to be 
+a non-technical designation for a single amino acid residue (or a dipeptide), 
+capped with an acetyl group and an N-methyl group.
+
+Frequently, alanine dipeptide (Ace-Ala-Nme) is used as a model system for
+protein folding studies.
+It's especially enjoyed by machine learning researchers,
+because it's small enough to be simulated quickly,
+but large enough to exhibit interesting folding behavior.
+
+This repo extends a typical data generation of alanine dipeptide
+to include other amino acids.
+While not all amino acids are included, these scripts could allow for easy generation
+of multiple so-called dipeptide "mini-proteins" for machine learning studies
+to add slight diversity to the models considered.
+
+For example, the addition of a disulfide bond in methionine dipeptide
+could be used to study the effects of disulfide bonds on protein folding.
+Or the addition of a tryptophan residue could be used to study the effects
+of aromatic residues on protein folding.
+Furthermore, glycine dipeptide could be used to study the effects of
+a residue with a small side chain on protein folding, inducing more flexibility.
+
 ## Included Proteins (And Providence)
 
 ### Alanine Dipeptide
