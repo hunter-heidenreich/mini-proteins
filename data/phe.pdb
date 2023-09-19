@@ -1,0 +1,38 @@
+HEADER    UNCLASSIFIED                            25-Mar-23
+TITLE     ALL ATOM STRUCTURE FOR MOLECULE GLA                                   
+AUTHOR    AUTOMATED TOPOLOGY BUILDER (ATB) REVISION 2022-10-31 14:18:01
+AUTHOR   2  https://atb.uq.edu.au
+ATOM      1  CH3 ACE     1       4.446  -1.377   0.383  1.00  0.00           C
+ATOM      2 HH31 ACE     1       4.939  -0.401   0.381  1.00  0.00           H
+ATOM      3 HH32 ACE     1       4.963  -2.047  -0.309  1.00  0.00           H
+ATOM      4 HH33 ACE     1       4.528  -1.803   1.390  1.00  0.00           H
+ATOM      5  C   ACE     1       2.981  -1.296  -0.012  1.00  0.00           C
+ATOM      6  O   ACE     1       2.371  -2.259  -0.490  1.00  0.00           O
+ATOM      7  N   PHE     2       2.378  -0.103   0.220  1.00  0.00           N
+ATOM      8  H   PHE     2       2.880   0.681   0.622  1.00  0.00           H
+ATOM      9  CA  PHE     2       0.976   0.130  -0.067  1.00  0.00           C
+ATOM     10  HA  PHE     2       0.746  -0.317  -1.040  1.00  0.00           H
+ATOM     11  CB  PHE     2       0.052  -0.530   1.006  1.00  0.00           C
+ATOM     12  HB1 PHE     2       0.119   0.048   1.935  1.00  0.00           H
+ATOM     13  HB2 PHE     2       0.481  -1.518   1.201  1.00  0.00           H
+ATOM     14  CG  PHE     2      -1.389  -0.684   0.570  1.00  0.00           C
+ATOM     15  CD1 PHE     2      -1.722  -1.620  -0.423  1.00  0.00           C
+ATOM     16  HD1 PHE     2      -0.937  -2.236  -0.857  1.00  0.00           H
+ATOM     17  CE1 PHE     2      -3.044  -1.777  -0.845  1.00  0.00           C
+ATOM     18  HE1 PHE     2      -3.282  -2.509  -1.613  1.00  0.00           H
+ATOM     19  CZ  PHE     2      -4.058  -1.002  -0.275  1.00  0.00           C
+ATOM     20  HZ  PHE     2      -5.088  -1.126  -0.599  1.00  0.00           H
+ATOM     21  CE2 PHE     2      -3.741  -0.072   0.718  1.00  0.00           C
+ATOM     22  HE2 PHE     2      -4.524   0.531   1.171  1.00  0.00           H
+ATOM     23  CD2 PHE     2      -2.416   0.087   1.133  1.00  0.00           C
+ATOM     24  HD2 PHE     2      -2.177   0.814   1.907  1.00  0.00           H
+ATOM     25  C   PHE     2       0.780   1.655  -0.116  1.00  0.00           C
+ATOM     26  O   PHE     2       1.547   2.407   0.496  1.00  0.00           O
+ATOM     27  N   NME     3      -0.268   2.088  -0.846  1.00  0.00           N
+ATOM     28  H   NME     3      -0.873   1.400  -1.275  1.00  0.00           H
+ATOM     29  CH3 NME     3      -0.656   3.490  -0.923  1.00  0.00           C
+ATOM     30 HH31 NME     3      -1.444   3.730  -0.199  1.00  0.00           H
+ATOM     31 HH32 NME     3      -1.017   3.715  -1.930  1.00  0.00           H
+ATOM     32 HH33 NME     3       0.220   4.102  -0.706  1.00  0.00           H
+TER
+END
