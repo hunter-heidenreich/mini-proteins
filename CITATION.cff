@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Heidenreich"
+    given-names: "Hunter"
+    google-scholar: "https://scholar.google.com/citations?user=pwRTY1oAAAAJ"
+title: "Mini-proteins"
+version: 0.0.1
+url: "https://github.com/hunter-heidenreich/mini-proteins"
