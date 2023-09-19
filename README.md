@@ -37,6 +37,30 @@ of aromatic residues on protein folding.
 Furthermore, glycine dipeptide could be used to study the effects of
 a residue with a small side chain on protein folding, inducing more flexibility.
 
+The scripts are written building off of the [GROMACS tutorial](https://cbp-unitn.gitlab.io/qcb22-23/QCB/tutorial2_gromacs) 
+by Luca Tubiana at the University of Trento.
+We make several key deviations: 
+- 
+
+## Usage
+
+### 0. Prepare the simulation structure
+
+The first step is to prepare the simulation structure.
+This is done by running the `0_preprocess.sh` script:
+```
+ID=ala sh scripts/0_preprocess.sh
+```
+where `ID` is the three-letter amino acid code of the protein to simulate.
+
+This script will:
+- Build the protein topology from the PDB file
+- Build the box
+- Solvate the protein in water 
+- Add ions to neutralize the system
+
+Additional parameters can be found at the top of the script.
+
 ## Included Proteins (And Providence)
 
 ### Alanine Dipeptide
