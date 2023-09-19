@@ -102,3 +102,17 @@ a residue with a small side chain on protein folding, inducing more flexibility.
 - Valine Dipeptide (Ace-Val-Nme)
 - PubChem CID: 13875188 ([URL](https://pubchem.ncbi.nlm.nih.gov/compound/13875188))
 - ATB: [URL](https://atb.uq.edu.au/molecule.py?molid=40060)
+
+## Citation
+
+If you use this repo in your research, please cite:
+
+```
+@misc{Heidenreich_Mini-proteins_2023,
+author = {Heidenreich, Hunter},
+month = sep,
+title = {{Mini-proteins}},
+url = {https://github.com/hunter-heidenreich/mini-proteins},
+year = {2023}
+}
+```
