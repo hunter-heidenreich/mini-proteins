@@ -35,12 +35,12 @@ could be used to study the effects of disulfide bonds on protein folding.
 Or the addition of a tryptophan residue could be used to study the effects
 of aromatic residues on protein folding.
 Furthermore, glycine dipeptide could be used to study the effects of
-a residue with a small side chain on protein folding, inducing more flexibility.
+a residue with a small side chain on protein folding, inducing more flexibility. 
 
 The scripts are written building off of the [GROMACS tutorial](https://cbp-unitn.gitlab.io/qcb22-23/QCB/tutorial2_gromacs) 
 by Luca Tubiana at the University of Trento.
 We make several key deviations: 
-- 
+- langevin
 
 ## Usage
 
