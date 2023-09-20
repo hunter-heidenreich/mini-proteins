@@ -155,6 +155,8 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Methionine Dipeptide
 
+![Methionine Dipetide](methionine.gif)
+
 - `data/met.pdb`
 - Methionine Dipeptide (Ace-Met-Nme)
 - PubChem CID: 13875186 ([URL](https://pubchem.ncbi.nlm.nih.gov/compound/13875186))
