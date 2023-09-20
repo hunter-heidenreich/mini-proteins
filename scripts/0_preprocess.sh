@@ -6,7 +6,9 @@ PNAME=NA  # positive ion
 CNAME=CL  # negative ion
 CONC=0.1  # ion concentration (mol/L)
 
-mkdir -p out/${ID}
+OUTDIR=out/${ID}/raw
+
+mkdir -p ${OUTDIR}
 
 # Build the topology
 # -f: input coordinate file
@@ -15,7 +17,7 @@ mkdir -p out/${ID}
 # -i: output position restraint file
 # -ff: force field
 # -water: water model
-gmx pdb2gmx -f data/${ID}.pdb -o out/${ID}/processed.gro -p out/${ID}/topol.top -i out/${ID}/posre.itp -ff ${FF} -water ${WATER}
+gmx pdb2gmx -f data/${ID}.pdb -o ${OUTDIR}/processed.gro -p ${OUTDIR}/topol.top -i ${PWD}/${OUTDIR}/posre.itp -ff ${FF} -water ${WATER}
 
 # Center the molecule in the box
 # -f: input coordinate file
@@ -23,21 +25,21 @@ gmx pdb2gmx -f data/${ID}.pdb -o out/${ID}/processed.gro -p out/${ID}/topol.top 
 # -c: center the molecule in the box
 # -d: distance between molecule and box edge
 # -bt: box type
-gmx editconf -f out/${ID}/processed.gro -o out/${ID}/newbox.gro -c -d ${BOX} -bt ${BOX_TYPE}
+gmx editconf -f ${OUTDIR}/processed.gro -o ${OUTDIR}/newbox.gro -c -d ${BOX} -bt ${BOX_TYPE}
 
 # Solvate
 # -cp: input coordinate file
 # -cs: input coordinate file
 # -o: output coordinate file
 # -p: output topology file
-gmx solvate -cp out/${ID}/newbox.gro -cs spc216.gro -o out/${ID}/solv.gro -p out/${ID}/topol.top
+gmx solvate -cp ${OUTDIR}/newbox.gro -cs spc216.gro -o ${OUTDIR}/solv.gro -p ${OUTDIR}/topol.top
 
 # Generate parameter files
 # -f: input mdp file
 # -c: input coordinate file
 # -p: input topology file
 # -o: output tpr file
-gmx grompp -f config/minim.mdp -c out/${ID}/solv.gro -p out/${ID}/topol.top -o out/${ID}/ions.tpr
+gmx grompp -f config/minim.mdp -c ${OUTDIR}/solv.gro -p ${OUTDIR}/topol.top -o ${OUTDIR}/ions.tpr
 
 # Add ions
 # -s: input tpr file
@@ -49,4 +51,4 @@ gmx grompp -f config/minim.mdp -c out/${ID}/solv.gro -p out/${ID}/topol.top -o o
 # - conc: concentration of ions in mol/l
 #
 # Note: automatically selecting solution group 'SOL' to be replaced by ions
-echo SOL | gmx genion -s out/${ID}/ions.tpr -o out/${ID}/solv_ions.gro -p out/${ID}/topol.top -pname ${PNAME} -nname ${CNAME} -conc ${CONC} -neutral
+echo SOL | gmx genion -s ${OUTDIR}/ions.tpr -o ${OUTDIR}/solv_ions.gro -p ${OUTDIR}/topol.top -pname ${PNAME} -nname ${CNAME} -conc ${CONC} -neutral

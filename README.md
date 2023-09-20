@@ -61,9 +61,69 @@ This script will:
 
 Additional parameters can be found at the top of the script.
 
+### 1. Energy Minimization & Equilibration
+
+The next step is to perform energy minimization and equilibration.
+This is done by running the `1_equil.sh` script:
+```bash
+ID=ala sh scripts/1_equil.sh
+```
+where `ID` is the three-letter amino acid code of the protein to simulate.
+
+This script will:
+- Perform energy minimization (using steepest descent, see `config/minim.mdp` for all parameters)
+- Equilibrate the system with constant volume (NVT, T=298K, see `config/nvt.mdp` for all parameters) for 100 ps 
+- Equilibrate the system with constant pressure (NPT, T=298K, P=1bar, see `config/npt.mdp` for all parameters) for 200 ps
+
+Additional parameters can be found at the top of the script.
+
+### 2. Production Simulation
+
+The next step is to run the production simulation.
+This is done by running the `2_prod.sh` script:
+```bash
+ID=ala sh scripts/2_prod.sh
+```
+where `ID` is the three-letter amino acid code of the protein to simulate.
+
+This script will:
+- Run the production simulation (NVT, T=298K, see `config/prod.mdp` for all parameters) for 1 ns
+    - A full simulation would be much longer, but this is sufficient for a demonstration
+
+Additional parameters can be found at the top of the script.
+
+### 3. Post-Process Simulation
+
+The final step is to post-process the simulation.
+
+This is done by running the `3_post.sh` script:
+```bash
+ID=ala sh scripts/3_post.sh
+```
+where `ID` is the three-letter amino acid code of the protein to simulate.
+
+This script will:
+- Generate a plot of the potential energy over time
+- Generate a plot of the total energy over time
+- Generate a plot of the temperature over time
+- Extract the trajectory as a PDB file
+- Extract the forces as a xvg file
+
+Additional parameters can be found at the top of the script.
+
+### All-in-one
+
+Alternatively, all of the above steps can be run at once by running the `run.sh` script:
+```bash
+ID=ala sh scripts/run.sh
+```
+where `ID` is the three-letter amino acid code of the protein to simulate.
+
 ## Included Proteins (And Providence)
 
 ### Alanine Dipeptide
+
+![Alanine Dipetide](alanine.gif)
 
 - `data/ala.pdb`: 
 - Alanine Dipeptide (Ace-Ala-Nme) 
@@ -71,6 +131,8 @@ Additional parameters can be found at the top of the script.
 - ATB: [URL](https://atb.uq.edu.au/molecule.py?molid=757282)
 
 ### Glycine Dipeptide
+
+![Glycine Dipetide](glycine.gif)
 
 - `data/gly.pdb`: 
 - Glycine Dipeptide (Ace-Gly-Nme) 

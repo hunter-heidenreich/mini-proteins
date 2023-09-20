@@ -1,0 +1,41 @@
+title                   = Langevin dipeptide MD
+define                  = -DFLEXIBLE; flexible water molecules
+; Run parameters
+integrator              = sd        ; leap-frog stochastic dynamics integrator
+dt                      = 0.001     ; 1 fs
+; nsteps                  = 100000000 ; 1 fs * 100_000_000 = 100 ns
+nsteps                  = 1000000   ; 1 fs * 1_000_000 = 1 ns
+; nsteps                  = 100000   ; 1 fs * 100_000 = 100 ps
+; Output control
+nstxout                 = 100       ; suppress bulky .trr file by specifying 
+nstvout                 = 100       ; 0 for output frequency of nstxout,
+nstfout                 = 100       ; nstvout, and nstfout
+nstenergy               = 100       ; save energies every 0.1 ps
+nstlog                  = 100       ; update log file every 0.1 ps
+; nstxout-compressed      = 100       ; save compressed coordinates every 0.1 ps
+compressed-x-grps       = Protein   ; save only the Protein
+energygrps              = System    ;
+; Bond parameters
+continuation            = no        ; 
+; Neighborsearching
+cutoff-scheme           = Verlet    ; Buffered neighbor searching
+ns_type                 = grid      ; search neighboring grid cells
+nstlist                 = 40        ; update every 40 fs
+rcoulomb                = 0.9       ; short-range electrostatic cutoff (in nm)
+rvdw                    = 0.9       ; short-range van der Waals cutoff (in nm)
+; Electrostatics
+coulombtype             = Reaction-Field; Reaction-Field method
+epsilon-r               = 1             ;
+epsilon-rf              = 80            ; 
+; Temperature coupling is on
+tc-grps                 = Protein Non-Protein   ; two coupling groups - more accurate
+tau_t                   = 0.1     0.1           ; time constant, in ps
+ref_t                   = 298     298           ; reference temperature, one for each group, in K
+; Pressure coupling is off
+pcoupl                  = no     ; Pressure coupling on in NPT
+; Periodic boundary conditions
+pbc                     = xyz       ; 3-D PBC
+; Dispersion correction
+DispCorr                = EnerPres  ; account for cut-off vdW scheme
+; Velocity generation
+gen_vel                 = no        ; Velocity generation is off 
