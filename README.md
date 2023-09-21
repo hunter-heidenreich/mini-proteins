@@ -132,7 +132,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Glycine Dipeptide
 
-![Glycine Dipetide](glycine.gif)
+![Glycine Dipetide](imgs/gly.gif)
 
 - `data/gly.pdb`: 
 - Glycine Dipeptide (Ace-Gly-Nme) 
@@ -141,12 +141,16 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Isoleucine Dipeptide
 
+![Isoleucine Dipetide](imgs/ile.gif)
+
 - `data/ile.pdb`
 - Isoleucine Dipeptide (Ace-Ile-Nme)
 - PubChem CID: 7019852 ([URL](https://pubchem.ncbi.nlm.nih.gov/compound/7019852))
 - ATB: [URL](https://atb.uq.edu.au/molecule.py?molid=40061)
 
 ### Leucine Dipeptide
+
+![Leucine Dipetide](imgs/leu.gif)
 
 - `data/leu.pdb`
 - Leucine Dipeptide (Ace-Leu-Nme)
@@ -155,7 +159,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Methionine Dipeptide
 
-![Methionine Dipetide](methionine.gif)
+![Methionine Dipetide](imgs/met.gif)
 
 - `data/met.pdb`
 - Methionine Dipeptide (Ace-Met-Nme)
@@ -165,12 +169,16 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Phenylalanine Dipeptide
 
+![Phenylalanine Dipetide](imgs/phe.gif)
+
 - `data/phe.pdb`
 - Phenylalanine Dipeptide (Ace-Phe-Nme)
 - PubChem CID: 7019860 ([URL](https://pubchem.ncbi.nlm.nih.gov/compound/7019860))
 - ATB: [URL](https://atb.uq.edu.au/molecule.py?molid=459390)
 
 ### Proline Dipeptide
+
+![Proline Dipetide](imgs/pro.gif)
 
 - `data/pro.pdb`
 - Proline Dipeptide (Ace-Pro-Nme)
@@ -179,12 +187,16 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Tryptophan Dipeptide
 
+![Tryptophan Dipetide](imgs/trp.gif)
+
 - `data/trp.pdb`
 - Tryptophan Dipeptide (Ace-Trp-Nme)
 - PubChem CID: 151412 ([URL](https://pubchem.ncbi.nlm.nih.gov/compound/151412))
 - ATB: [URL](https://atb.uq.edu.au/molecule.py?molid=40063)
 
 ### Valine Dipeptide
+
+![Valine Dipetide](imgs/val.gif)
 
 - `data/val.pdb`
 - Valine Dipeptide (Ace-Val-Nme)
