@@ -123,7 +123,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Alanine Dipeptide
 
-![Alanine Dipetide](alanine.gif)
+![Alanine Dipetide](imgs/ala.gif)
 
 - `data/ala.pdb`: 
 - Alanine Dipeptide (Ace-Ala-Nme) 
