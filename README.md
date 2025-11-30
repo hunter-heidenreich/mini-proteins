@@ -98,7 +98,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Alanine Dipeptide
 
-![Alanine Dipeptide](https://hunterheidenreich.com/img/ala.webp)
+![Alanine Dipeptide](https://hunterheidenreich.com/img/alanine-dipeptide-molecular-dynamics.webp)
 
 - `data/ala.pdb`: 
 - Alanine Dipeptide (Ace-Ala-Nme) 
@@ -107,7 +107,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Glycine Dipeptide
 
-![Glycine Dipeptide](https://hunterheidenreich.com/img/gly.webp)
+![Glycine Dipeptide](https://hunterheidenreich.com/img/glycine-dipeptide-molecular-dynamics.webp)
 
 - `data/gly.pdb`: 
 - Glycine Dipeptide (Ace-Gly-Nme) 
@@ -116,7 +116,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Isoleucine Dipeptide
 
-![Isoleucine Dipeptide](https://hunterheidenreich.com/img/ile.webp)
+![Isoleucine Dipeptide](https://hunterheidenreich.com/img/isoleucine-dipeptide-molecular-dynamics.webp)
 
 - `data/ile.pdb`
 - Isoleucine Dipeptide (Ace-Ile-Nme)
@@ -125,7 +125,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Leucine Dipeptide
 
-![Leucine Dipeptide](https://hunterheidenreich.com/img/leu.webp)
+![Leucine Dipeptide](https://hunterheidenreich.com/img/leucine-dipeptide-molecular-dynamics.webp)
 
 - `data/leu.pdb`
 - Leucine Dipeptide (Ace-Leu-Nme)
@@ -134,7 +134,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Methionine Dipeptide
 
-![Methionine Dipeptide](https://hunterheidenreich.com/img/met.webp)
+![Methionine Dipeptide](https://hunterheidenreich.com/img/methionine-dipeptide-molecular-dynamics.webp)
 
 - `data/met.pdb`
 - Methionine Dipeptide (Ace-Met-Nme)
@@ -144,7 +144,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Phenylalanine Dipeptide
 
-![Phenylalanine Dipeptide](https://hunterheidenreich.com/img/phe.webp)
+![Phenylalanine Dipeptide](https://hunterheidenreich.com/img/phenylalanine-dipeptide-molecular-dynamics.webp)
 
 - `data/phe.pdb`
 - Phenylalanine Dipeptide (Ace-Phe-Nme)
@@ -153,7 +153,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Proline Dipeptide
 
-![Proline Dipeptide](https://hunterheidenreich.com/img/pro.webp)
+![Proline Dipeptide](https://hunterheidenreich.com/img/proline-dipeptide-molecular-dynamics.webp)
 
 - `data/pro.pdb`
 - Proline Dipeptide (Ace-Pro-Nme)
@@ -162,7 +162,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Tryptophan Dipeptide
 
-![Tryptophan Dipeptide](https://hunterheidenreich.com/img/trp.webp)
+![Tryptophan Dipeptide](https://hunterheidenreich.com/img/tryptophan-dipeptide-molecular-dynamics.webp)
 
 - `data/trp.pdb`
 - Tryptophan Dipeptide (Ace-Trp-Nme)
@@ -171,7 +171,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Valine Dipeptide
 
-![Valine Dipeptide](https://hunterheidenreich.com/img/val.webp)
+![Valine Dipeptide](https://hunterheidenreich.com/img/valine-dipeptide-molecular-dynamics.webp)
 
 - `data/val.pdb`
 - Valine Dipeptide (Ace-Val-Nme)
