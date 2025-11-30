@@ -126,7 +126,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Alanine Dipeptide
 
-![Alanine Dipetide](imgs/ala.gif)
+![Alanine Dipetide](https://hunterheidenreich.com/img/ala.webp)
 
 - `data/ala.pdb`: 
 - Alanine Dipeptide (Ace-Ala-Nme) 
@@ -135,7 +135,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Glycine Dipeptide
 
-![Glycine Dipetide](imgs/gly.gif)
+![Glycine Dipetide](https://hunterheidenreich.com/img/gly.webp)
 
 - `data/gly.pdb`: 
 - Glycine Dipeptide (Ace-Gly-Nme) 
@@ -144,7 +144,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Isoleucine Dipeptide
 
-![Isoleucine Dipetide](imgs/ile.gif)
+![Isoleucine Dipetide](https://hunterheidenreich.com/img/ile.webp)
 
 - `data/ile.pdb`
 - Isoleucine Dipeptide (Ace-Ile-Nme)
@@ -153,7 +153,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Leucine Dipeptide
 
-![Leucine Dipetide](imgs/leu.gif)
+![Leucine Dipetide](https://hunterheidenreich.com/img/leu.webp)
 
 - `data/leu.pdb`
 - Leucine Dipeptide (Ace-Leu-Nme)
@@ -162,7 +162,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Methionine Dipeptide
 
-![Methionine Dipetide](imgs/met.gif)
+![Methionine Dipetide](https://hunterheidenreich.com/img/met.webp)
 
 - `data/met.pdb`
 - Methionine Dipeptide (Ace-Met-Nme)
@@ -172,7 +172,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Phenylalanine Dipeptide
 
-![Phenylalanine Dipetide](imgs/phe.gif)
+![Phenylalanine Dipetide](https://hunterheidenreich.com/img/phe.webp)
 
 - `data/phe.pdb`
 - Phenylalanine Dipeptide (Ace-Phe-Nme)
@@ -181,7 +181,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Proline Dipeptide
 
-![Proline Dipetide](imgs/pro.gif)
+![Proline Dipetide](https://hunterheidenreich.com/img/pro.webp)
 
 - `data/pro.pdb`
 - Proline Dipeptide (Ace-Pro-Nme)
@@ -190,7 +190,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Tryptophan Dipeptide
 
-![Tryptophan Dipetide](imgs/trp.gif)
+![Tryptophan Dipetide](https://hunterheidenreich.com/img/trp.webp)
 
 - `data/trp.pdb`
 - Tryptophan Dipeptide (Ace-Trp-Nme)
@@ -199,7 +199,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Valine Dipeptide
 
-![Valine Dipetide](imgs/val.gif)
+![Valine Dipetide](https://hunterheidenreich.com/img/val.webp)
 
 - `data/val.pdb`
 - Valine Dipeptide (Ace-Val-Nme)
