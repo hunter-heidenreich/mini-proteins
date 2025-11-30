@@ -4,46 +4,18 @@ A repo of simple molecular dynamics simulations of small proteins with GROMACS.
 
 ## Overview
 
-This repo contains scripts to: 
-- Perform energy minimization
-- Solvate the protein
-- Add ions to neutralize the system
-- Equilibrate the system (NVT)
-- Equilibrate the system (NPT)
-- Run a production simulation
-- Post-process the simulation
-of a mini-protein using GROMACS.
+This repo contains a pipeline to generate molecular dynamics (MD) trajectories and **extract atomic forces** for capped dipeptides (often called "mini-proteins"). It is designed to create training datasets for Machine Learning potentials or to study simple folding dynamics.
 
-In this repo, we consider a "mini-protein" to be 
-a non-technical designation for a single amino acid residue (or a dipeptide), 
-capped with an acetyl group and an N-methyl group.
+Key features include:
 
-Frequently, alanine dipeptide (Ace-Ala-Nme) is used as a model system for
-protein folding studies.
-It's especially enjoyed by machine learning researchers,
-because it's small enough to be simulated quickly,
-but large enough to exhibit interesting folding behavior.
+- **Langevin Dynamics:** Uses stochastic dynamics (SD) for proper canonical sampling (NVT/NPT), replacing the standard velocity-rescaling often found in tutorials.
+- **Force Extraction:** Configured to write uncompressed trajectory files (`.trr`), allowing for the extraction of atomic forces essential for force-matching/ML applications.
+- **Diverse Residues:** Extends the standard Alanine Dipeptide model to include bulky (Trp), sulfur-containing (Met), and flexible (Gly) residues.
 
-This repo extends a typical data generation of alanine dipeptide
-to include other amino acids.
-While not all amino acids are included, these scripts could allow for easy generation
-of multiple so-called dipeptide "mini-proteins" for machine learning studies
-to add slight diversity to the models considered.
-
-For example, the addition of a disulfide bond in methionine dipeptide
-could be used to study the effects of disulfide bonds on protein folding.
-Or the addition of a tryptophan residue could be used to study the effects
-of aromatic residues on protein folding.
-Furthermore, glycine dipeptide could be used to study the effects of
-a residue with a small side chain on protein folding, inducing more flexibility. 
+**Note on Physics:** By default, this pipeline uses the **Amber03** force field and **TIP3P** water. Users intending to use this data for modern production-grade ML models should consider updating the `0_preprocess.sh` script to use newer force fields (e.g., CHARMM36m or Amber ff19SB).
 
 The scripts are written building off of the [GROMACS tutorial](https://cbp-unitn.gitlab.io/qcb22-23/QCB/tutorial2_gromacs) 
 by Luca Tubiana at the University of Trento.
-We make several key deviations: 
-- langevin dynamics is used instead of velocity rescaling
-- the production simulation is run for a longer time
-- the production simulation writes uncompressed trajectory files, 
-    which are much larger but allow for force extraction
 
 ## Usage
 
@@ -75,22 +47,22 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 This script will:
 - Perform energy minimization (using steepest descent, see `config/minim.mdp` for all parameters)
-- Equilibrate the system with constant volume (NVT, T=298K, see `config/nvt.mdp` for all parameters) for 100 ps 
-- Equilibrate the system with constant pressure (NPT, T=298K, P=1bar, see `config/npt.mdp` for all parameters) for 200 ps
+- Equilibrate the system with constant volume (NVT, T=298K, see `config/nvt_langevin.mdp` for all parameters) for 100 ps 
+- Equilibrate the system with constant pressure (NPT, T=298K, P=1bar, see `config/npt_langevin.mdp` for all parameters) for 200 ps
 
 Additional parameters can be found at the top of the script.
 
 ### 2. Production Simulation
 
 The next step is to run the production simulation.
-This is done by running the `2_prod.sh` script:
+This is done by running the `2_md_lang.sh` script:
 ```bash
-ID=ala sh scripts/2_prod.sh
+ID=ala sh scripts/2_md_lang.sh
 ```
 where `ID` is the three-letter amino acid code of the protein to simulate.
 
 This script will:
-- Run the production simulation (NVT, T=298K, see `config/prod.mdp` for all parameters) for 1 ns
+- Run the production simulation (Langevin Dynamics, T=298K, see `config/md_langevin.mdp` for all parameters) for 1 ns
     - A full simulation would be much longer, but this is sufficient for a demonstration
 
 Additional parameters can be found at the top of the script.
@@ -122,11 +94,11 @@ ID=ala sh scripts/run.sh
 ```
 where `ID` is the three-letter amino acid code of the protein to simulate.
 
-## Included Proteins (And Providence)
+## Included Proteins (And Provenance)
 
 ### Alanine Dipeptide
 
-![Alanine Dipetide](https://hunterheidenreich.com/img/ala.webp)
+![Alanine Dipeptide](https://hunterheidenreich.com/img/ala.webp)
 
 - `data/ala.pdb`: 
 - Alanine Dipeptide (Ace-Ala-Nme) 
@@ -135,7 +107,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Glycine Dipeptide
 
-![Glycine Dipetide](https://hunterheidenreich.com/img/gly.webp)
+![Glycine Dipeptide](https://hunterheidenreich.com/img/gly.webp)
 
 - `data/gly.pdb`: 
 - Glycine Dipeptide (Ace-Gly-Nme) 
@@ -144,7 +116,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Isoleucine Dipeptide
 
-![Isoleucine Dipetide](https://hunterheidenreich.com/img/ile.webp)
+![Isoleucine Dipeptide](https://hunterheidenreich.com/img/ile.webp)
 
 - `data/ile.pdb`
 - Isoleucine Dipeptide (Ace-Ile-Nme)
@@ -153,7 +125,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Leucine Dipeptide
 
-![Leucine Dipetide](https://hunterheidenreich.com/img/leu.webp)
+![Leucine Dipeptide](https://hunterheidenreich.com/img/leu.webp)
 
 - `data/leu.pdb`
 - Leucine Dipeptide (Ace-Leu-Nme)
@@ -162,7 +134,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Methionine Dipeptide
 
-![Methionine Dipetide](https://hunterheidenreich.com/img/met.webp)
+![Methionine Dipeptide](https://hunterheidenreich.com/img/met.webp)
 
 - `data/met.pdb`
 - Methionine Dipeptide (Ace-Met-Nme)
@@ -172,7 +144,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Phenylalanine Dipeptide
 
-![Phenylalanine Dipetide](https://hunterheidenreich.com/img/phe.webp)
+![Phenylalanine Dipeptide](https://hunterheidenreich.com/img/phe.webp)
 
 - `data/phe.pdb`
 - Phenylalanine Dipeptide (Ace-Phe-Nme)
@@ -181,7 +153,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Proline Dipeptide
 
-![Proline Dipetide](https://hunterheidenreich.com/img/pro.webp)
+![Proline Dipeptide](https://hunterheidenreich.com/img/pro.webp)
 
 - `data/pro.pdb`
 - Proline Dipeptide (Ace-Pro-Nme)
@@ -190,7 +162,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Tryptophan Dipeptide
 
-![Tryptophan Dipetide](https://hunterheidenreich.com/img/trp.webp)
+![Tryptophan Dipeptide](https://hunterheidenreich.com/img/trp.webp)
 
 - `data/trp.pdb`
 - Tryptophan Dipeptide (Ace-Trp-Nme)
@@ -199,7 +171,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 
 ### Valine Dipeptide
 
-![Valine Dipetide](https://hunterheidenreich.com/img/val.webp)
+![Valine Dipeptide](https://hunterheidenreich.com/img/val.webp)
 
 - `data/val.pdb`
 - Valine Dipeptide (Ace-Val-Nme)
