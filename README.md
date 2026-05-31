@@ -140,7 +140,7 @@ where `ID` is the three-letter amino acid code of the protein to simulate.
 - Methionine Dipeptide (Ace-Met-Nme)
 - PubChem CID: 13875186 ([URL](https://pubchem.ncbi.nlm.nih.gov/compound/13875186))
 - ATB: [URL](https://atb.uq.edu.au/molecule.py?molid=618964)
-- Contains a disulfide bond
+- Contains a thioether side chain (sulfur)
 
 ### Phenylalanine Dipeptide
 
@@ -191,3 +191,12 @@ url = {https://github.com/hunter-heidenreich/mini-proteins},
 year = {2023}
 }
 ```
+
+## License & Attribution
+
+The original work in this repository (the Python analysis script, the Bash pipeline as assembled here, and the curated dipeptide dataset under `data/`) is released under the [MIT License](LICENSE), copyright (c) 2023 Hunter Heidenreich.
+
+Components with their own terms, not covered by that license:
+
+* **Pipeline scripts**: written building off [Luca Tubiana's GROMACS tutorial](https://cbp-unitn.gitlab.io/qcb22-23/QCB/tutorial2_gromacs) (University of Trento); please respect the original author's terms.
+* **Force field and water model**: Amber03 and TIP3P are third-party and distributed with GROMACS under their own licenses.
