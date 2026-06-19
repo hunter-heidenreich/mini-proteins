@@ -1,10 +1,17 @@
 NTM=1
 NTO=8
 
-# GPU offload toggle. GPU=1 offloads nonbonded + PME to the GPU; this subset is
-# safe with the position restraints used during equilibration (we deliberately
-# do NOT force -update gpu here, which can conflict with posres). Default 0 = CPU.
-if [ "${GPU:-0}" = "1" ]; then EQ_GPU="-nb gpu -pme gpu"; else EQ_GPU=""; fi
+# GPU offload toggle. GPU=1 offloads to the GPU. NOTE: energy minimization uses
+# the steepest-descent (non-dynamical) integrator, which does NOT support PME on
+# GPU -- so EM gets nonbonded-only offload, while NVT/NPT (sd) get nonbonded+PME.
+# We deliberately avoid -update gpu here (can conflict with position restraints).
+if [ "${GPU:-0}" = "1" ]; then
+    EM_GPU="-nb gpu"
+    EQ_GPU="-nb gpu -pme gpu"
+else
+    EM_GPU=""
+    EQ_GPU=""
+fi
 
 OUTDIR=out/${ID}/raw
 
@@ -20,7 +27,7 @@ gmx grompp -f config/minim.mdp -c ${OUTDIR}/solv_ions.gro -p ${OUTDIR}/topol.top
 # -ntomp: number of OpenMP threads
 # -v: verbose
 # -deffnm: default file name
-gmx mdrun -ntmpi $NTM -ntomp $NTO ${EQ_GPU} -v -deffnm ${OUTDIR}/em
+gmx mdrun -ntmpi $NTM -ntomp $NTO ${EM_GPU} -v -deffnm ${OUTDIR}/em
 
 # Calculate energy during relaxation
 # -f: input file
