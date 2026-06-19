@@ -2,18 +2,18 @@
 ; Run parameters
 integrator              = sd        ; leap-frog stochastic dynamics integrator
 dt                      = 0.001     ; 1 fs
-; nsteps                  = 100000000 ; 1 fs * 100_000_000 = 100 ns
-nsteps                  = 1000000   ; 1 fs * 1_000_000 = 1 ns
+nsteps                  = 100000000 ; 1 fs * 100_000_000 = 100 ns (override per run via mdrun -nsteps)
+; nsteps                  = 1000000   ; 1 fs * 1_000_000 = 1 ns
 ; nsteps                  = 100000   ; 1 fs * 100_000 = 100 ps
-; Output control
-nstxout                 = 100       ; suppress bulky .trr file by specifying 
-nstvout                 = 100       ; 0 for output frequency of nstxout,
-nstfout                 = 100       ; nstvout, and nstfout
-nstenergy               = 100       ; save energies every 0.1 ps
-nstlog                  = 100       ; update log file every 0.1 ps
-; nstxout-compressed      = 100       ; save compressed coordinates every 0.1 ps
+; Output control (1 ps; forces decorrelate fast but configs do not, so denser dumps
+; only bloat the .trr without adding independent training samples)
+nstxout                 = 1000      ; save coordinates every 1.0 ps (positions for forces + phi/psi)
+nstvout                 = 0         ; velocities not needed for force-matching labels
+nstfout                 = 1000      ; save forces every 1.0 ps (the ML training labels)
+nstenergy               = 1000      ; save energies every 1.0 ps
+nstlog                  = 5000      ; update log file every 5.0 ps
 ; Bond parameters
-continuation            = yes       ; restart from NPT checkpoint
+continuation            = no        ; fresh velocities each replica (see gen_vel below)
 ; Neighborsearching
 cutoff-scheme           = Verlet    ; Buffered neighbor searching
 nstlist                 = 40        ; update every 40 fs
@@ -33,5 +33,10 @@ pcoupl                  = no     ; Pressure coupling on in NPT
 pbc                     = xyz       ; 3-D PBC
 ; Dispersion correction
 DispCorr                = EnerPres  ; account for cut-off vdW scheme
-; Velocity generation
-gen_vel                 = no        ; Velocity generation is off 
+; Velocity generation: fresh Maxwell velocities per replica -> independent trajectories.
+; With gen_seed/ld_seed = -1, each grompp/mdrun draws a different random seed, so
+; replicas started from the same NPT structure diverge immediately.
+gen_vel                 = yes       ; draw new velocities each run
+gen_temp                = 298       ; Maxwell distribution temperature (K)
+gen_seed                = -1        ; random seed (different per replica)
+ld_seed                 = -1        ; random Langevin (sd) noise seed per run

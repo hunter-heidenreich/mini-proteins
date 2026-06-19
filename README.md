@@ -63,14 +63,13 @@ ID=ala sh scripts/2_md_lang.sh
 where `ID` is the three-letter amino acid code of the protein to simulate.
 
 This script will:
-- Run the production simulation (Langevin Dynamics, T=298K, see `config/md_langevin.mdp` for all parameters) for 1 ns
-    - A full simulation would be much longer, but this is sufficient for a demonstration
+- Run `NREP` **independent** production replicas (Langevin Dynamics, T=298K, see `config/md_langevin.mdp`), each 100 ns by default
+    - Replicas start from the equilibrated NPT structure with fresh Maxwell velocities and independent random seeds, so they diverge immediately. This is plain unbiased MD — the trajectories serve as both ML force-label data and the validation ensemble.
+    - Run length and replica count are env-overridable: `NREP=3 NSTEPS=50000000 ID=ala sh scripts/2_md_lang.sh` (default `NREP=5`, `NSTEPS=100000000` ≈ 100 ns).
 
 Additional parameters can be found at the top of the script.
 
 ### 3. Post-Process Simulation
-
-The final step is to post-process the simulation.
 
 This is done by running the `3_post.sh` script:
 ```bash
@@ -78,15 +77,31 @@ ID=ala sh scripts/3_post.sh
 ```
 where `ID` is the three-letter amino acid code of the protein to simulate.
 
-This script will:
-- Generate a plot of the energy minimization (over minimization steps)
-- Generate a plot of the potential energy over time
-- Generate a plot of the total energy over time
-- Generate a plot of the temperature over time
-- Extract the trajectory as a PDB file
-- Extract the forces as a xvg file
+This script will, **for every replica**:
+- Extract the forces as an xvg file (the ML training labels)
+- Extract the PBC-corrected solute trajectory as a PDB file
 
-Additional parameters can be found at the top of the script.
+and generate sanity plots of the energy minimization, and of potential energy,
+total energy, and temperature over the NVT→NPT→production timeline (replicas overlaid).
+
+### 4. Validation Analysis
+
+This is done by running the `4_analyze.sh` script:
+```bash
+ID=ala sh scripts/4_analyze.sh
+```
+
+This script computes backbone dihedrals (`gmx rama`) across all replicas and produces:
+- A φ/ψ **free-energy surface** (`figs/rama_fes.png`) and dihedral marginals
+- **Basin populations** (αR / αL / PPII / β) with per-replica mean±std — agreement across replicas is the convergence check
+- For **glycine**, a (φ,ψ)→(−φ,−ψ) **symmetry index** (must approach 0 at convergence)
+- **Karplus ³J(HN,Hα)** predicted from φ, for comparison with NMR
+
+Results are written to `out/${ID}/data/validation.txt`. Comparison references:
+Vymětal & Vondrášek 2010 ([ff03 FES](https://doi.org/10.1021/jp100950w)),
+Graf 2007 / Best 2008 (J-couplings: [JACS](https://doi.org/10.1021/ja0660406),
+[Biophys. J.](https://doi.org/10.1529/biophysj.108.132696)),
+Hu 2003 ([Ace-Ala/Gly-Nme maps](https://doi.org/10.1002/prot.10279)).
 
 ### All-in-one
 

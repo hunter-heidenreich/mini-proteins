@@ -21,8 +21,9 @@ gmx mdrun -ntmpi $NTM -ntomp $NTO -v -deffnm ${OUTDIR}/em
 # -f: input file
 # -o: output file
 #
-# Note: terms are selected by name (robust to FF/electrostatics changes)
-echo "Potential\n" | gmx energy -f ${OUTDIR}/em -o ${OUTDIR}/em_pot.xvg
+# Note: terms are selected by name (robust to FF/electrostatics changes).
+# printf (not echo) so the newline is interpreted across shells.
+printf 'Potential\n' | gmx energy -f ${OUTDIR}/em -o ${OUTDIR}/em_pot.xvg
 
 # Configure NVT equilibration
 # -f: input file
@@ -42,9 +43,9 @@ gmx mdrun -ntmpi $NTM -ntomp $NTO -deffnm ${OUTDIR}/nvt
 # -o: output file
 #
 # Note: the echo command is used to select the term
-echo "Potential\n" | gmx energy -f ${OUTDIR}/nvt -o ${OUTDIR}/nvt_pot.xvg
-echo "Total-Energy\n" | gmx energy -f ${OUTDIR}/nvt -o ${OUTDIR}/nvt_etot.xvg
-echo "Temperature\n" | gmx energy -f ${OUTDIR}/nvt -o ${OUTDIR}/nvt_temp.xvg
+printf 'Potential\n' | gmx energy -f ${OUTDIR}/nvt -o ${OUTDIR}/nvt_pot.xvg
+printf 'Total-Energy\n' | gmx energy -f ${OUTDIR}/nvt -o ${OUTDIR}/nvt_etot.xvg
+printf 'Temperature\n' | gmx energy -f ${OUTDIR}/nvt -o ${OUTDIR}/nvt_temp.xvg
 
 # Configure NPT equilibration
 # -f: input file
@@ -64,7 +65,7 @@ gmx mdrun -ntmpi $NTM -ntomp $NTO -deffnm ${OUTDIR}/npt
 # Calculate thermodynamic quantity during NPT equilibration
 # -f: input file
 # -o: output file
-echo "Potential\n"| gmx energy -f ${OUTDIR}/npt -o ${OUTDIR}/npt_pot.xvg
-echo "Total-Energy\n"| gmx energy -f ${OUTDIR}/npt -o ${OUTDIR}/npt_etot.xvg
-echo "Temperature\n"| gmx energy -f ${OUTDIR}/npt -o ${OUTDIR}/npt_temp.xvg
-#echo "Density\n"| gmx energy -f ${OUTDIR}/npt -o ${OUTDIR}/npt_dens.xvg
+printf 'Potential\n' | gmx energy -f ${OUTDIR}/npt -o ${OUTDIR}/npt_pot.xvg
+printf 'Total-Energy\n' | gmx energy -f ${OUTDIR}/npt -o ${OUTDIR}/npt_etot.xvg
+printf 'Temperature\n' | gmx energy -f ${OUTDIR}/npt -o ${OUTDIR}/npt_temp.xvg
+#printf 'Density\n' | gmx energy -f ${OUTDIR}/npt -o ${OUTDIR}/npt_dens.xvg

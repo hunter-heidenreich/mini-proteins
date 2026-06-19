@@ -1,3 +1,4 @@
+import glob
 import os
 
 import matplotlib.pyplot as plt
@@ -23,12 +24,13 @@ def read_xvg(filename):
 _ID = os.environ.get("ID")
 print(_ID)
 
+RAW = f'out/{_ID}/raw'
 os.makedirs(f'out/{_ID}/figs', exist_ok=True)
 
 # Energy minimization uses steepest descent: its x-axis is the minimization
 # step count, NOT a physical time, so it cannot share a picosecond timeline
 # with the dynamics. Plot it on its own step axis.
-em = read_xvg(f'out/{_ID}/raw/em_pot.xvg')
+em = read_xvg(f'{RAW}/em_pot.xvg')
 plt.plot(em[1:, 0], em[1:, 1], label='em')
 plt.xlabel('minimization step')
 plt.ylabel('potential (kJ/mol)')
@@ -39,25 +41,27 @@ plt.savefig(f'out/{_ID}/figs/minimization.png')
 plt.close()
 
 
-def stitch(stages):
-    """Concatenate per-stage (time, value) arrays onto one continuous
-    picosecond timeline, offsetting each stage by the previous stage's end.
-    The dynamics timeline starts at t=0 (energy minimization is excluded)."""
-    offset = 0.0
-    for arr in stages.values():
-        arr[:, 0] += offset
-        offset = arr[-1, 0]
-    return stages
-
-
 def plot_dynamics(name, ylabel, title, fname):
-    stages = stitch({
-        'nvt': read_xvg(f'out/{_ID}/raw/nvt_{name}.xvg'),
-        'npt': read_xvg(f'out/{_ID}/raw/npt_{name}.xvg'),
-        'md': read_xvg(f'out/{_ID}/raw/md_lang_{name}.xvg'),
-    })
-    for label, arr in stages.items():
-        plt.plot(arr[1:, 0], arr[1:, 1], label=label)
+    """Plot a quantity over the NVT -> NPT -> production timeline.
+
+    Equilibration (NVT, NPT) is a single chain stitched onto one ps axis. Each
+    production replica is independent and starts at the end of NPT, so they are
+    overlaid on a common time origin.
+    """
+    nvt = read_xvg(f'{RAW}/nvt_{name}.xvg')
+    npt = read_xvg(f'{RAW}/npt_{name}.xvg')
+    npt[:, 0] += nvt[-1, 0]
+    md_start = npt[-1, 0]
+
+    plt.plot(nvt[1:, 0], nvt[1:, 1], label='nvt')
+    plt.plot(npt[1:, 0], npt[1:, 1], label='npt')
+
+    for path in sorted(glob.glob(f'{RAW}/md_lang_r*_{name}.xvg')):
+        rep = os.path.basename(path).split('_')[2]  # e.g. r1
+        md = read_xvg(path)
+        md[:, 0] += md_start
+        plt.plot(md[1:, 0], md[1:, 1], label=f'md {rep}', alpha=0.7)
+
     plt.xlabel('time (ps)')
     plt.ylabel(ylabel)
     plt.title(title)
