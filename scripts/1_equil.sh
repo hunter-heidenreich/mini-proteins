@@ -1,6 +1,11 @@
 NTM=1
 NTO=8
 
+# GPU offload toggle. GPU=1 offloads nonbonded + PME to the GPU; this subset is
+# safe with the position restraints used during equilibration (we deliberately
+# do NOT force -update gpu here, which can conflict with posres). Default 0 = CPU.
+if [ "${GPU:-0}" = "1" ]; then EQ_GPU="-nb gpu -pme gpu"; else EQ_GPU=""; fi
+
 OUTDIR=out/${ID}/raw
 
 # Configure relaxation
@@ -15,7 +20,7 @@ gmx grompp -f config/minim.mdp -c ${OUTDIR}/solv_ions.gro -p ${OUTDIR}/topol.top
 # -ntomp: number of OpenMP threads
 # -v: verbose
 # -deffnm: default file name
-gmx mdrun -ntmpi $NTM -ntomp $NTO -v -deffnm ${OUTDIR}/em
+gmx mdrun -ntmpi $NTM -ntomp $NTO ${EQ_GPU} -v -deffnm ${OUTDIR}/em
 
 # Calculate energy during relaxation
 # -f: input file
@@ -36,7 +41,7 @@ gmx grompp -f config/nvt_langevin.mdp -c ${OUTDIR}/em.gro -r ${OUTDIR}/em.gro -p
 # -ntmpi: number of MPI threads
 # -ntomp: number of OpenMP threads
 # -deffnm: default file name
-gmx mdrun -ntmpi $NTM -ntomp $NTO -deffnm ${OUTDIR}/nvt
+gmx mdrun -ntmpi $NTM -ntomp $NTO ${EQ_GPU} -deffnm ${OUTDIR}/nvt
 
 # Calculate thermodynamic quantity during NVT equilibration
 # -f: input file
@@ -60,7 +65,7 @@ gmx grompp -f config/npt_langevin.mdp -c ${OUTDIR}/nvt.gro -r ${OUTDIR}/nvt.gro 
 # -ntmpi: number of MPI threads
 # -ntomp: number of OpenMP threads
 # -deffnm: default file name
-gmx mdrun -ntmpi $NTM -ntomp $NTO -deffnm ${OUTDIR}/npt
+gmx mdrun -ntmpi $NTM -ntomp $NTO ${EQ_GPU} -deffnm ${OUTDIR}/npt
 
 # Calculate thermodynamic quantity during NPT equilibration
 # -f: input file

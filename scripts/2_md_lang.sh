@@ -8,6 +8,12 @@ NTO=8
 NREP=${NREP:-5}            # number of independent replicas
 NSTEPS=${NSTEPS:-100000000} # steps per replica (1 fs * 1e8 = 100 ns); overrides the .mdp
 
+# GPU offload toggle. GPU=1 runs production fully GPU-resident (-update gpu),
+# which is the big win for this small system. Safe here: production is NVT
+# (no barostat), no position restraints, solute unconstrained (water SETTLE).
+# Default 0 = CPU.
+if [ "${GPU:-0}" = "1" ]; then PROD_GPU="-nb gpu -pme gpu -bonded gpu -update gpu"; else PROD_GPU=""; fi
+
 OUTDIR=out/${ID}/raw
 
 REP=1
@@ -21,7 +27,7 @@ while [ ${REP} -le ${NREP} ]; do
     gmx grompp -f config/md_langevin.mdp -c ${OUTDIR}/npt.gro -p ${OUTDIR}/topol.top -o ${OUTDIR}/${TAG}.tpr
 
     # Run production. -nsteps overrides the value baked into the .tpr.
-    gmx mdrun -ntmpi ${NTM} -ntomp ${NTO} -nsteps ${NSTEPS} -deffnm ${OUTDIR}/${TAG}
+    gmx mdrun -ntmpi ${NTM} -ntomp ${NTO} ${PROD_GPU} -nsteps ${NSTEPS} -deffnm ${OUTDIR}/${TAG}
 
     # Thermodynamic quantities (selected by name; robust to term-layout changes)
     printf 'Potential\n'    | gmx energy -f ${OUTDIR}/${TAG} -o ${OUTDIR}/${TAG}_pot.xvg

@@ -111,6 +111,17 @@ ID=ala sh scripts/run.sh
 ```
 where `ID` is the three-letter amino acid code of the protein to simulate.
 
+### Running on a GPU / in the cloud
+
+Every MD step accepts a `GPU=1` toggle to offload to a CUDA GPU (default `0` = CPU):
+```bash
+GPU=1 ID=ala sh scripts/run.sh
+```
+`scripts/bench.sh` reports production throughput and an estimated `$/protein` so
+you can size a rental. Since these systems are small, a consumer GPU (e.g. RTX
+4090 on Vast.ai/RunPod) is the cost-optimal choice — roughly a few dollars per
+protein. See [`docs/cloud-run.md`](docs/cloud-run.md) for a full setup checklist.
+
 ## Included Proteins (And Provenance)
 
 ### Alanine Dipeptide
