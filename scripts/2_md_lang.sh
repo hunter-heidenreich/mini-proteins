@@ -20,6 +20,6 @@ gmx mdrun -ntmpi $NTM -ntomp $NTO -deffnm ${OUTDIR}/md_lang
 # Calculate thermodynamic quantity during production Langevin dynamics simulation
 # -f: input file
 # -o: output file
-echo "10\n"| gmx energy -f ${OUTDIR}/md_lang -o ${OUTDIR}/md_lang_pot.xvg
-echo "12\n"| gmx energy -f ${OUTDIR}/md_lang -o ${OUTDIR}/md_lang_etot.xvg
-echo "13\n"| gmx energy -f ${OUTDIR}/md_lang -o ${OUTDIR}/md_lang_temp.xvg
+echo "Potential\n"| gmx energy -f ${OUTDIR}/md_lang -o ${OUTDIR}/md_lang_pot.xvg
+echo "Total-Energy\n"| gmx energy -f ${OUTDIR}/md_lang -o ${OUTDIR}/md_lang_etot.xvg
+echo "Temperature\n"| gmx energy -f ${OUTDIR}/md_lang -o ${OUTDIR}/md_lang_temp.xvg

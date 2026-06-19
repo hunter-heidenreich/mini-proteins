@@ -8,11 +8,12 @@ This repo contains a pipeline to generate molecular dynamics (MD) trajectories a
 
 Key features include:
 
-- **Langevin Dynamics:** Uses stochastic dynamics (SD) for proper canonical sampling (NVT/NPT), replacing the standard velocity-rescaling often found in tutorials.
-- **Force Extraction:** Configured to write uncompressed trajectory files (`.trr`), allowing for the extraction of atomic forces essential for force-matching/ML applications.
+- **Langevin Dynamics:** Uses stochastic dynamics (SD) for proper canonical sampling (NVT/NPT), replacing the standard velocity-rescaling often found in tutorials. The forces written to the `.trr` are the conservative (force-field) forces, i.e. valid `-∇U` labels.
+- **Force Extraction:** Configured to write uncompressed trajectory files (`.trr`), allowing for the extraction of atomic forces essential for force-matching/ML applications. The solute is left **unconstrained** in production so its force labels are complete.
+- **Consistent electrostatics:** All stages (EM → NVT → NPT → production) use **PME** at a 1.0 nm cutoff with **rigid TIP3P** water, matching how Amber was parameterized — one Hamiltonian throughout.
 - **Diverse Residues:** Extends the standard Alanine Dipeptide model to include bulky (Trp), sulfur-containing (Met), and flexible (Gly) residues.
 
-**Note on Physics:** By default, this pipeline uses the **Amber03** force field and **TIP3P** water. Users intending to use this data for modern production-grade ML models should consider updating the `0_preprocess.sh` script to use newer force fields (e.g., CHARMM36m or Amber ff19SB).
+**Note on Physics:** By default, this pipeline uses the **Amber03** force field and **TIP3P** water. Users intending to use this data for modern production-grade ML models should consider updating the `0_preprocess.sh` script to use newer force fields (e.g., CHARMM36m or Amber ff19SB). The pipeline extracts forces on the **solute only** (rigid water as environment); training an ML potential on explicit-water forces would require making water flexible (`-DFLEXIBLE`) and reducing the timestep to ~0.5 fs.
 
 The scripts are written building off of the [GROMACS tutorial](https://cbp-unitn.gitlab.io/qcb22-23/QCB/tutorial2_gromacs) 
 by Luca Tubiana at the University of Trento.
@@ -78,6 +79,7 @@ ID=ala sh scripts/3_post.sh
 where `ID` is the three-letter amino acid code of the protein to simulate.
 
 This script will:
+- Generate a plot of the energy minimization (over minimization steps)
 - Generate a plot of the potential energy over time
 - Generate a plot of the total energy over time
 - Generate a plot of the temperature over time
