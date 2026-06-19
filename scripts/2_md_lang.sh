@@ -8,11 +8,12 @@ NTO=8
 NREP=${NREP:-5}            # number of independent replicas
 NSTEPS=${NSTEPS:-100000000} # steps per replica (1 fs * 1e8 = 100 ns); overrides the .mdp
 
-# GPU offload toggle. GPU=1 runs production fully GPU-resident (-update gpu),
-# which is the big win for this small system. Safe here: production is NVT
-# (no barostat), no position restraints, solute unconstrained (water SETTLE).
-# Default 0 = CPU.
-if [ "${GPU:-0}" = "1" ]; then PROD_GPU="-nb gpu -pme gpu -bonded gpu -update gpu"; else PROD_GPU=""; fi
+# GPU offload toggle. GPU=1 offloads nonbonded, PME and bonded to the GPU.
+# NOTE: -update gpu (GPU-resident integration) is NOT usable here -- GROMACS
+# only supports it with the md integrator, and production uses sd (Langevin).
+# The integration update therefore stays on the CPU (per-step host<->device
+# transfer), which limits speedup for a system this small. Default 0 = CPU.
+if [ "${GPU:-0}" = "1" ]; then PROD_GPU="-nb gpu -pme gpu -bonded gpu"; else PROD_GPU=""; fi
 
 OUTDIR=out/${ID}/raw
 

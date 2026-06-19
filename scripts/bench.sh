@@ -20,7 +20,7 @@ BENCH_NSTEPS=${BENCH_NSTEPS:-50000}
 TARGET_NS=${TARGET_NS:-500}
 PRICE=${PRICE:-0.40}
 
-if [ "${GPU:-0}" = "1" ]; then PROD_GPU="-nb gpu -pme gpu -bonded gpu -update gpu"; else PROD_GPU=""; fi
+if [ "${GPU:-0}" = "1" ]; then PROD_GPU="-nb gpu -pme gpu -bonded gpu"; else PROD_GPU=""; fi
 
 OUTDIR=out/${ID}/raw
 if [ ! -f "${OUTDIR}/npt.gro" ]; then
