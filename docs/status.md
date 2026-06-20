@@ -80,6 +80,25 @@ not a data problem.
   GROMACS cross-check on the existing `.trr`, MDTraj may need a `.gro`/`.pdb`
   rather than `.tpr` as `--top`.
 
+## Reclaiming disk (persist, *then* delete)
+
+Raw trajectories are scratch and regenerable — `validation.json` records the
+seeds + GROMACS version + git commit, so a run can be reproduced. Safe to delete
+to reclaim space, **but only after the small certified derivatives are in git**
+(they otherwise live only on the ephemeral pod):
+
+```bash
+sh scripts/pull_results.sh && git add results && git commit -m "results: <id>" && git push
+du -sh out/<id>/raw/*.trr                 # the space hog (production trajectories)
+rm -f out/<id>/raw/md_lang_r*.trr out/<id>/raw/*.cpt \
+      out/<id>/raw/em.* out/<id>/raw/nvt.* out/<id>/raw/npt.*
+```
+
+Nothing downstream needs the `.trr`: the ff03 cross-check (step 4) compares
+*results* (FES/populations in `validation.json` + the FES figure), not raw
+frames. Optional insurance: push the small `md_lang_r*_rama.xvg` (φ/ψ series, a
+few MB) to HF if you want to recompute dihedral observables without re-simulating.
+
 ## After the shake-out checks out
 
 - Phase 2 (kinetics: adaptive-sampling/MSM), Phase 3 (all 9 dipeptides, both
