@@ -65,18 +65,28 @@ CAPS = {"ACE", "NME", "NAC", "NH2", "NHE"}
 
 # ---- Karplus parameter sets for 3J(HN,Ha) --------------------------------
 # Form: J(phi) = A cos^2(theta) + B cos(theta) + C,  theta = phi - 60 deg.
+# This is exactly the form Graf et al. 2007 use, J(phi)=A cos^2(phi+theta)
+# +B cos(phi+theta)+C with theta=-60 deg (their Methods), so the values below
+# are directly comparable to their experiment.
 # Reporting several sets is deliberate: Best et al. 2008 show the Karplus
 # choice shifts <3J> by ~1 Hz, so a single number overstates precision.
+# NOTE: Hu-Bax-1997 is the set Graf 2007 adopted for 3J(HN,Ha) (their Table S2,
+# ref 56), so <J> under it is parameterization-matched to GRAF_EXP_J below --
+# the gap to experiment is a real ensemble difference, not a Karplus artifact.
+GRAF_MATCHED = "Hu-Bax-1997"
 KARPLUS = {
-    "Hu-Bax-1997": (7.09, -1.42, 1.55),     # Hu & Bax, JACS 1997, 119, 6360
+    "Hu-Bax-1997": (7.09, -1.42, 1.55),     # Hu & Bax, JACS 1997, 119, 6360 (= Graf 2007)
     "Vuister-Bax-1993": (6.51, -1.76, 1.60),  # Vuister & Bax, JACS 1993, 115, 7772
     "Wang-Bax-1996": (6.98, -1.38, 1.72),   # Wang & Bax, JACS 1996, 118, 2483
 }
 
-# Experimental 3J(HN,Ha) anchor. There is no clean measurement for the *capped*
-# Ala dipeptide; the experimental reference is short alanine peptides (Ala3-Ala7),
-# which sit ~5.6-5.9 Hz (PPII-dominant). Treated as a target range, not a point.
-GRAF_EXP_J = (5.6, 5.9)   # Hz; Graf 2007 / Best 2008, short Ala peptides
+# Experimental 3J(HN,Ha) anchor (Hz). There is no clean measurement for the
+# *capped* Ala dipeptide; the reference is short alanine peptides. Graf 2007
+# Table 3 reports interior-Ala values 5.59-5.68 Hz across Ala3-Ala7 (PPII-
+# dominant). Caveat: those are free/zwitterionic peptides, not Ace-Ala-Nme, and
+# Best 2008 shows terminal blocking shifts helicity -- so this is a ~5.6 Hz
+# target, not a like-for-like number.
+GRAF_EXP_J = (5.59, 5.68)   # Hz; Graf 2007 (doi:10.1021/ja0660406), Table 3, interior Ala
 
 # ---- Published reference populations: Vymetal & Vondrasek 2010 ------------
 # ff03/TIP3P alanine dipeptide (Ace-Ala-Nme), metadynamics, percent (mean, std).
@@ -470,8 +480,12 @@ def main():
     report["J_HN_Ha_Hz"] = {
         name: {"mean": round(float(v.mean()), 2), "std": round(float(v.std()), 2)}
         for name, v in jrep.items()}
-    report["J_HN_Ha_experiment_Hz"] = {"range": list(GRAF_EXP_J),
-                                       "source": "Graf 2007 / Best 2008 (short Ala peptides)"}
+    j_matched = float(jrep[GRAF_MATCHED].mean())
+    report["J_HN_Ha_experiment_Hz"] = {
+        "range": list(GRAF_EXP_J),
+        "source": "Graf 2007 (doi:10.1021/ja0660406) Table 3, interior Ala",
+        "karplus_matched_set": GRAF_MATCHED,
+        "matched_minus_exp_Hz": round(j_matched - sum(GRAF_EXP_J) / 2.0, 2)}
 
     # ---- glycine symmetry ------------------------------------------------
     if (_id or "").lower() == "gly":
@@ -604,12 +618,15 @@ def format_report(_id, r):
         refs = f"{ref[0]:5.1f} +/- {ref[1]:.1f}" if ref else "    --"
         L.append(f"  {name:12s} {o[0]:5.1f} +/- {o[1]:4.1f}   {refs:>14s}")
 
+    ej = r["J_HN_Ha_experiment_Hz"]
     L += ["",
           "J-COUPLING  3J(HN,Ha) [Hz]  (Karplus choice swings ~1 Hz; Best 2008)"]
     for name, d in r["J_HN_Ha_Hz"].items():
-        L.append(f"  {name:18s} {d['mean']:.2f} +/- {d['std']:.2f}")
-    ej = r["J_HN_Ha_experiment_Hz"]
-    L.append(f"  {'experiment':18s} {ej['range'][0]:.1f}-{ej['range'][1]:.1f}   ({ej['source']})")
+        tag = "  <- Graf 2007's Karplus set" if name == ej["karplus_matched_set"] else ""
+        L.append(f"  {name:18s} {d['mean']:.2f} +/- {d['std']:.2f}{tag}")
+    L.append(f"  {'experiment':18s} {ej['range'][0]:.2f}-{ej['range'][1]:.2f}   ({ej['source']})")
+    L.append(f"  parameterization-matched gap: {ej['matched_minus_exp_Hz']:+.2f} Hz "
+             f"(real ensemble difference, not a Karplus artifact)")
 
     if "glycine_symmetry" in r:
         gs = r["glycine_symmetry"]
