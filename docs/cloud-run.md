@@ -98,8 +98,11 @@ Nothing valuable may live *only* on the pod. Three destinations:
 3. **Big data → HuggingFace** (the durable, shareable home — mirrors the field's
    convention). The curated arrays and any trajectories you want to keep:
    ```bash
-   # curated.npz per (id, tier) + raw trajectories you care about
-   huggingface-cli upload <your-namespace>/mini-proteins-bench out/<id>/<tier>/curated.npz
+   # one-time: huggingface-cli login
+   #           huggingface-cli repo create mini-proteins-bench --repo-type dataset
+   # then, per (id, tier) -- 3rd arg is the path inside the HF repo:
+   huggingface-cli upload --repo-type dataset hheiden/mini-proteins-bench \
+       out/<id>/<tier>/curated.npz <id>/<tier>/curated.npz
    ```
    Raw `.trr/.dcd` are regenerable from the code + the seeds in `meta.json`, so
    they're optional to keep; `curated.npz` + the reports are what matter.

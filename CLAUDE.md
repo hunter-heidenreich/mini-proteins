@@ -31,7 +31,7 @@ There are no tests, linters, or a build step — this is a simulation pipeline, 
 
 - **git:** code, configs, input PDBs, docs, env lock (`requirements-ml.lock`), and **small certified reports** committed under `results/` (the `out/` tree is gitignored, so `scripts/pull_results.sh` copies `validation.*`/`curation.*`/figures into `results/` for committing — run it before stopping the pod).
 - **RunPod (scratch):** raw/intermediate trajectories + the GPU env; regenerable from code + the seeds in each run's `meta.json`.
-- **HuggingFace:** `curated.npz` and any trajectories worth keeping — too big for git, the durable/shareable deliverable.
+- **HuggingFace** (`hheiden/mini-proteins-bench`, dataset repo): `curated.npz` and any trajectories worth keeping — too big for git, the durable/shareable deliverable.
 
 ### Benchmark suite (OpenMM, newer work — see `docs/benchmark.md`)
 

@@ -220,7 +220,7 @@ Three tiers; nothing valuable lives *only* on the compute box.
 |---|---|---|
 | **git / GitHub** | code, configs, input PDBs, docs, env lock, **small certified reports** (`results/`) | durable, versioned, small |
 | **RunPod** (scratch) | raw/intermediate trajectories, the GPU env | large, regenerable from code + seeds in `meta.json` |
-| **HuggingFace** | `curated.npz` + any trajectories worth keeping — the published artifact | too big for git; durable + shareable; the "in conversation" deliverable |
+| **HuggingFace** (`hheiden/mini-proteins-bench`, dataset repo) | `curated.npz` + any trajectories worth keeping — the published artifact | too big for git; durable + shareable; the "in conversation" deliverable |
 
 `scripts/pull_results.sh` moves the small reports from the gitignored `out/` into
 the versioned `results/` before the pod is stopped; big data is pushed to HF. See
