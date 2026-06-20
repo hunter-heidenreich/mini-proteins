@@ -17,6 +17,35 @@ transferability benchmark for learned dynamics (Timewarp), latent propagators
 (Implicit Transfer Operators), and Boltzmann generators; torsional diffusion
 works on exactly the torsion torus these systems live on.
 
+## Prior art & how this differs (verified against the papers)
+
+| work | systems | engine / FF / solvent | what it does |
+|---|---|---|---|
+| **Timewarp** (Klein 2023) | AD, 2AA, **4AA** | OpenMM / amber14 / implicit | transferable time-coarsened MD acceleration (normalizing flow) |
+| **MDGen** (Jing 2024) | **tetra/penta-peptides** | OpenMM / amber14 / gbn2 + tip3pfb | generative trajectories: forward sim, TPS, upsampling, inpainting, design |
+| **ITO** (Schreiner 2023) | alanine dipeptide + CG | OpenMM / — | multi-time-resolution latent propagators (SE(3) diffusion) |
+| **Transferable BG** (Klein 2024) | dipeptides | — / — | transferable zero-shot Boltzmann generators + reweighting |
+
+Two consequences this benchmark is designed around:
+
+1. **Dipeptides alone are largely solved** — Timewarp/MDGen have moved to
+   tetra/pentapeptides. So the dipeptide suite is positioned as the
+   **interpretable diagnostic floor**, not the frontier, with tetrapeptides
+   planned (Phase 5). The frontier-relevance comes from Phase 5; the dipeptides'
+   value is being *controlled and known*.
+2. **The differentiation is rigor, not systems.** The released datasets above are
+   "we ran it." None ship *certified-converged ground truth*: audited
+   convergence (effective samples, transition counts), per-DOF convergence
+   gating, a shipped MSM/FES answer key, honest kinetic ceilings (e.g. cis/trans
+   ω declared out of scope), literature-anchored validation, and a *per-residue
+   diagnostic curriculum with known slow DOFs*. That is the niche — the
+   **validated/diagnostic** benchmark methods can be *scored and debugged*
+   against, not just trained on.
+
+To stay cross-comparable we adopt their conventions where sensible: ff14SB,
+gbn2/TIP3P, OpenMM, the transferability split, torsion (sin/cos) featurization →
+TICA, and Jensen–Shannon divergence as a distributional metric (see Metrics).
+
 ## Systems — the difficulty curriculum
 
 Nine capped dipeptides (Ace-X-Nme), chosen so the suite spans intrinsic
@@ -56,28 +85,38 @@ One engine for both solvent tiers. Rationale:
   benchmark is reproducible and comparable for its intended audience.
 - At ~2,300 atoms (explicit) GROMACS's speed edge is irrelevant.
 
-Force field is **ff03 across both tiers** (consistency + comparability with the
-prior GROMACS validation). ff03 in OpenMM comes from `amber03.xml` if bundled,
-otherwise via `openmmforcefields`.
+Force field is **amber14 / ff14SB across both tiers** — the de-facto standard in
+the comparable literature (MDGen, Timewarp, Transferable Boltzmann Generators),
+chosen for cross-comparability. ff03 (the earlier GROMACS choice) is older and
+documented over-helical; carrying it into the benchmark would make the data
+incomparable. ff14SB comes from `amber14-all.xml` (or `openmmforcefields`).
 
 ### GROMACS is retained as a cross-engine validation anchor
-The earlier GROMACS alanine runs (ff03/TIP3P, validated against Vymětal &
-Vondrášek 2010) are **not discarded**. Re-running alanine-explicit in OpenMM and
-confirming it reproduces the GROMACS FES / populations / timescales is an
-*independent-engine agreement check* — evidence the OpenMM pipeline is correct
-that a single-engine project normally cannot provide. The GROMACS analysis logic
-(`scripts/analyze.py`: basin partitions, convergence stats, literature
-comparison, J-couplings, force QC) is engine-agnostic and carries over with new
+The earlier GROMACS alanine runs (ff03/TIP3P, validated against the literature)
+are **not discarded** — but because the benchmark FF is now ff14SB, they do *not*
+validate the benchmark FES directly (different FF, different surface). The check
+instead is: **run ff03 in OpenMM** (`--forcefield amber03.xml tip3p.xml
+--temperature 298 --friction 10`) and confirm it reproduces the GROMACS ff03
+FES/populations. Equilibrium populations are unaffected by
+thermostat/friction/constraint differences, so this *thermodynamics* check
+cleanly validates the OpenMM pipeline against an independent engine. The GROMACS
+analysis logic (`scripts/analyze.py`: basin partitions, convergence stats,
+literature comparison, J-couplings) is engine-agnostic and carries over with new
 I/O adapters (MDTraj instead of `gmx rama`/`gmx energy`).
 
 ## Two tiers
 
 | | Tier 1 — explicit (realism) | Tier 2 — implicit (generative) |
 |---|---|---|
-| solvent | TIP3P, PME, 1.0 nm cutoff | GB (OBC2 / GBn2), no box |
+| solvent | TIP3P, PME, 1.0 nm cutoff | **GBn2**, no box |
 | `u(solute)` | not tractable (solvent-marginalized) | **tractable** → BG / energy-guided / reweighting |
 | cost | the compute sink (×9 REST2) | cheap → aggressive rare-event sampling |
-| role | physical reference; cross-validates Tier 2 | primary substrate for energy-based generative methods |
+| role | physical reference | primary substrate for energy-based generative methods |
+
+Shared settings (field-aligned with MDGen/Timewarp): ff14SB, Langevin **310 K**,
+**2 fs** with H-bond constraints, low friction (**0.3 ps⁻¹** explicit /
+**0.1 ps⁻¹** implicit), **100 fs** save stride (fine enough for the
+trajectory-upsampling task; coarser strides are derived by subsampling).
 
 Expect the tiers to **differ** in populations and kinetics — that difference is
 itself a benchmark axis ("how much does the solvent model distort the learned
@@ -142,26 +181,35 @@ Documented per residue, so the kinetic claims are auditable.
 
 ## Benchmark tasks & metrics (the leaderboard)
 
+Shared featurization (MDGen convention, for cross-comparability): sin/cos of all
+torsions (φ,ψ,χ,ω) → **TICA** (deeptime/PyEMMA). Primary distributional metric:
+**Jensen–Shannon divergence** on the TICA components and per-DOF marginals.
+
 | task | method class | metric vs ground truth |
 |---|---|---|
-| latent embedding | reduced-rep / AE | reconstruction error; recovered intrinsic dim; FES preserved under embedding |
+| latent embedding | reduced-rep / AE | reconstruction error; recovered intrinsic dim; FES/TICA preserved under embedding |
 | propagator | transfer operator | implied-timescale error; Chapman–Kolmogorov; rate error |
-| equilibrium sampler | Boltzmann generator | FES / marginal match; reweighted free-energy error (Tier 2, needs `u(x)`) |
-| trajectory generation | (video-)diffusion | distributional+kinetic match of generated vs MD: FES, timescales, n-step transition densities (frame stride is a parameter; ~10–50 ps shows motion, 1 ps is jitter) |
+| equilibrium sampler | Boltzmann generator | JSD on TICA/marginals; reweighted free-energy error (Tier 2, needs `u(x)`) |
+| trajectory generation | (video-)diffusion | distributional+kinetic match of generated vs MD: JSD on TICA, implied timescales, n-step transition densities (frame stride is a parameter; 100 fs supports upsampling, ~10–50 ps shows macro-motion) |
 
 Metrics are **distributional/kinetic**, not per-frame: a generated trajectory is
-good iff its implied FES and timescales match the MD's.
+good iff its implied FES/TICA and timescales match the MD's.
 
 ## Roadmap
 
 - **Phase 0 — curation layer (engine-agnostic).** Export + reference-observable
   computer + correlation-aware/transferability splits, runnable on the existing
   GROMACS alanine data. Unblocks ML immediately.
-- **Phase 1 — OpenMM generation skeleton.** Plain MD, both tiers, Ala/Gly/Pro
-  shake-out (canonical / symmetric / ring+cis-trans). Cross-validate
-  Ala-explicit against GROMACS. *(This document ships with the Phase-1
-  skeleton: `benchmark/simulate.py`, `benchmark/systems.py`.)*
+- **Phase 1 — OpenMM generation skeleton.** Plain MD, both tiers (ff14SB), the
+  Ala/Gly/Pro shake-out. Plus the one-off ff03 cross-engine check against
+  GROMACS. *(Ships with this doc: `benchmark/simulate.py`,
+  `benchmark/systems.py`.)*
 - **Phase 2 — kinetics.** Adaptive-sampling/MSM; ship MSM timescales; ω
   thermodynamics-only.
-- **Phase 3 — scale to all 9, both tiers**, with per-DOF convergence gating.
+- **Phase 3 — scale to all 9 dipeptides, both tiers**, with per-DOF convergence
+  gating.
 - **Phase 4 — define tasks/metrics/splits as a released benchmark.**
+- **Phase 5 — tetrapeptides.** Extend to 4-mers for frontier relevance
+  (Timewarp/MDGen scale), using the dipeptides as the interpretable floor.
+  Requires a sequence-sampling design (which 4-mers) on top of the proven
+  pipeline.
