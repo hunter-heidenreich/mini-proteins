@@ -1,8 +1,0 @@
-# Benchmark framework (OpenMM track + Phase-0 curation/analysis).
-# Install on the run host; the GROMACS pipeline needs only requirements.txt.
-openmm
-openmmforcefields    # ff14SB / ff03 if not bundled with openmm
-mdtraj               # trajectory I/O + featurization (benchmark.features)
-deeptime             # TICA + MSM (benchmark.observables)
-numpy
-matplotlib

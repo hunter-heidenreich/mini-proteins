@@ -32,14 +32,21 @@ gmx --version | grep -i gpu   # should say "GPU support: CUDA"
 nvidia-smi
 ```
 
-## 3. Clone the repo + Python deps
+## 3. Clone the repo + Python deps (uv)
+
+Install [uv](https://docs.astral.sh/uv/), then one command creates the venv and
+installs the locked environment:
 
 ```bash
 git clone https://github.com/hunter-heidenreich/mini-proteins.git
 cd mini-proteins
-python3 -m venv .venv && . .venv/bin/activate
-pip install -r requirements.txt        # numpy, matplotlib (for plots/analysis)
+uv sync --extra ml     # GROMACS analysis (numpy/matplotlib) + OpenMM benchmark deps
+# GROMACS-only box: `uv sync` (omits openmm/mdtraj/deeptime)
 ```
+
+The pipeline scripts call `uv run` internally, so the usual
+`ID=ala sh scripts/run.sh` just works; benchmark entry points are run as
+`uv run --extra ml python -m benchmark.<...>`.
 
 ## 4. Benchmark first (≈ a few minutes, ~$0.05)
 
@@ -91,10 +98,9 @@ Nothing valuable may live *only* on the pod. Three destinations:
    sh scripts/pull_results.sh      # copies validation.*/curation.*/figs -> results/
    git add results && git commit -m "results: <id> certified reports" && git push
    ```
-2. **The environment recipe → git.** Pin what actually worked on the GPU box:
-   ```bash
-   pip freeze > requirements-ml.lock && git add requirements-ml.lock && git commit -m "lock ml env"
-   ```
+2. **The environment recipe → git.** Already handled: `uv.lock` is committed and
+   pins the exact resolution. Reproduce it anywhere with `uv sync --extra ml
+   --frozen`. Only commit again if you changed dependencies (`uv lock`).
 3. **Big data → HuggingFace** (the durable, shareable home — mirrors the field's
    convention). The curated arrays and any trajectories you want to keep:
    ```bash

@@ -16,4 +16,4 @@ done
 #   Karplus sets, glycine symmetry, and force-label QC. The force-label and
 #   energy-drift sections read the per-replica xvg files produced by 3_post.sh,
 #   so run stage 3 first; without them analyze.py still runs and notes the skip.
-ID=$ID python scripts/analyze.py
+ID=$ID uv run python scripts/analyze.py

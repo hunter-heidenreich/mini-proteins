@@ -14,7 +14,7 @@ GROMACS cross-engine check (separate, one-off): the prior GROMACS validation is
 ff03, not ff14SB, so it does NOT validate the benchmark FES directly. Instead run
 ff03 in OpenMM and confirm it reproduces the GROMACS ff03 FES/populations -- a
 *thermodynamics* check (unaffected by thermostat/friction differences):
-  python -m benchmark.simulate --residue ala --tier explicit \
+  uv run --extra ml python -m benchmark.simulate --residue ala --tier explicit \
          --forcefield amber03.xml tip3p.xml --temperature 298 --friction 10
 
 This is Phase 1 (plain MD only). Kinetically-faithful targets need more
@@ -24,8 +24,8 @@ This is Phase 1 (plain MD only). Kinetically-faithful targets need more
   PHASE 5 TODO: tetrapeptides (frontier system size).
 
 Usage:
-  python -m benchmark.simulate --residue ala --tier explicit --replica 1 --ns 100
-  python -m benchmark.simulate --residue pro --tier implicit --replica 1 --ns 100
+  uv run --extra ml python -m benchmark.simulate --residue ala --tier explicit --ns 100
+  uv run --extra ml python -m benchmark.simulate --residue pro --tier implicit --ns 100
 
 Outputs (out/<residue>/<tier>/r<replica>/):
   traj.dcd      trajectory at --report-ps stride
@@ -127,8 +127,9 @@ def _provenance(args, tier_cfg, friction, n_atoms):
 
 def run(args):
     if mm is None:
-        sys.exit("OpenMM not importable. Install openmm (and openmmforcefields "
-                 "if amber14/ff03 not bundled) on the run host.")
+        sys.exit("OpenMM not importable. Install the benchmark deps with "
+                 "`uv sync --extra ml` (add openmmforcefields only if a needed "
+                 "force field is not bundled).")
     if args.residue not in SYSTEMS:
         sys.exit(f"unknown residue {args.residue!r}; choose from {list(SYSTEMS)}")
     tier_cfg = TIERS[args.tier]

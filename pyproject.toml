@@ -1,0 +1,31 @@
+[project]
+name = "mini-proteins"
+version = "0.1.0"
+description = "Molecular dynamics of capped dipeptides + a learning/interoperable framework for benchmarking ML methods on biomolecular dynamics."
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+license = { file = "LICENSE" }
+dependencies = [
+    # Core: enough for the GROMACS pipeline's analysis/plots (scripts/).
+    "numpy",
+    "matplotlib",
+]
+
+[project.optional-dependencies]
+# Benchmark / OpenMM track (run host / GPU box): generation + Phase-0 curation.
+# ff14SB (amber14-all.xml) and ff03 (amber03.xml) ship with OpenMM, so
+# openmmforcefields is usually NOT needed. Add it only if a required force field
+# is missing (`uv add openmmforcefields`) -- it can pull conda-only deps
+# (ambertools), so it is kept out of the default resolution to keep
+# `uv sync --extra ml` robust.
+ml = [
+    "openmm",
+    "mdtraj",
+    "deeptime",
+]
+
+# Application/scripts repo, not a distributable package: uv manages the
+# environment + lockfile but does not build/install the project itself. Run
+# entry points with `uv run` (e.g. `uv run python -m benchmark.curate ...`).
+[tool.uv]
+package = false

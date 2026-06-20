@@ -21,7 +21,7 @@ for RES in ala gly pro; do
         REP=1
         while [ ${REP} -le ${NREP} ]; do
             echo "=== ${RES} / ${TIER} / replica ${REP}/${NREP} (${NS} ns) ==="
-            python -m benchmark.simulate \
+            uv run --extra ml python -m benchmark.simulate \
                 --residue ${RES} --tier ${TIER} --replica ${REP} \
                 --ns ${NS} --seed ${REP} --platform ${PLATFORM}
             REP=$((REP + 1))

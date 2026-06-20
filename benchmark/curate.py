@@ -17,9 +17,9 @@ Engine-agnostic by design: point --traj/--top at MDGen's released trajectories
 and the same pipeline applies (the "interoperate" track).
 
 Usage:
-  python -m benchmark.curate --residue ala --tier explicit
-  python -m benchmark.curate --residue ala --tier implicit --tica-lag 100 --msm-lag 200
-  python -m benchmark.curate --residue ala --tier explicit \
+  uv run --extra ml python -m benchmark.curate --residue ala --tier explicit
+  uv run --extra ml python -m benchmark.curate --residue ala --tier implicit --tica-lag 100 --msm-lag 200
+  uv run --extra ml python -m benchmark.curate --residue ala --tier explicit \
          --traj path/to/*.dcd --top path/to/topology.pdb
 """
 

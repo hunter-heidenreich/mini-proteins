@@ -68,7 +68,7 @@ def jsd_samples(a, b, bins=64, rng=(-180, 180)):
 def tica_project(feature_list, lagtime, dim=2):
     """Fit TICA on a list of (n_frames, n_feat) arrays; return projected list."""
     if not _HAVE_DEEPTIME:
-        raise ImportError("deeptime required for TICA; pip install deeptime")
+        raise ImportError("deeptime required for TICA; `uv sync --extra ml`")
     model = TICA(lagtime=lagtime, dim=dim).fit_fetch(feature_list)
     return [model.transform(f) for f in feature_list], model
 
@@ -80,7 +80,7 @@ def msm_timescales(projected_list, lagtime, n_clusters=100, n_timescales=4):
     the frame stride to get physical units. Verify deeptime API on the host.
     """
     if not _HAVE_DEEPTIME:
-        raise ImportError("deeptime required for MSM; pip install deeptime")
+        raise ImportError("deeptime required for MSM; `uv sync --extra ml`")
     clustering = KMeans(n_clusters=n_clusters, max_iter=50).fit_fetch(
         np.concatenate(projected_list))
     dtrajs = [clustering.transform(p) for p in projected_list]

@@ -18,6 +18,20 @@ Key features include:
 The scripts are written building off of the [GROMACS tutorial](https://cbp-unitn.gitlab.io/qcb22-23/QCB/tutorial2_gromacs) 
 by Luca Tubiana at the University of Trento.
 
+## Setup
+
+The Python environment is managed with [uv](https://docs.astral.sh/uv/)
+(`pyproject.toml` + committed `uv.lock`):
+
+```bash
+uv sync                 # core: numpy + matplotlib (GROMACS analysis/plots)
+uv sync --extra ml      # + the OpenMM benchmark track (openmm, mdtraj, deeptime)
+```
+
+You also need a working **GROMACS** (`gmx`) install for the simulation pipeline
+below. The pipeline scripts call `uv run` internally, so the commands shown
+work directly once `uv sync` has run.
+
 ## Usage
 
 ### 0. Prepare the simulation structure

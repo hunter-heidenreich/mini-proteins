@@ -109,7 +109,8 @@ def load_features(traj_path, top_path, residue):
     """
     if md is None:
         raise ImportError("mdtraj required to load trajectories; "
-                          "pip install mdtraj (or pass coords to compute_dihedrals)")
+                          "`uv sync --extra ml` installs it "
+                          "(or pass coords to compute_dihedrals)")
     t = md.load(traj_path, top=top_path)
     quads = torsion_quads(t.topology, residue)
     names = [n for n, _ in quads]

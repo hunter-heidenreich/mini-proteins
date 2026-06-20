@@ -16,7 +16,7 @@ for TRR in ${OUTDIR}/md_lang_r*.trr; do
 done
 
 # Energy/temperature sanity plots (reads the per-replica xvg files in raw/)
-ID=$ID python scripts/plot.py
+ID=$ID uv run python scripts/plot.py
 
 # Move final products into data/
 mkdir -p out/${ID}/data
