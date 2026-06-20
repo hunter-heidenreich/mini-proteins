@@ -139,6 +139,9 @@ def run(args):
 
     topology, positions, system = _build_system(args.residue, tier_cfg, args)
     n_atoms = topology.getNumAtoms()
+    # topology.pdb lets MDTraj/benchmark.curate load the DCD afterwards
+    with open(os.path.join(outdir, "topology.pdb"), "w") as fh:
+        app.PDBFile.writeFile(topology, positions, fh)
     print(f"[{args.residue}/{args.tier}/r{args.replica}] {n_atoms} atoms, "
           f"ff={_forcefield_files(args, tier_cfg)}, T={args.temperature}K, "
           f"friction={friction}/ps, seed={args.seed}")
