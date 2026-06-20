@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+> **Picking up work?** `docs/status.md` is the single "where we are / what's next" file (current state, what's verified vs pending, the ordered next-actions checklist). Start there.
+
 ## What this is
 
 A GROMACS molecular-dynamics pipeline for capped dipeptides ("mini-proteins", Ace-X-Nme). It runs unbiased Langevin (stochastic) MD and **extracts atomic forces** to build training datasets for ML potentials, while also serving as a validation ensemble against Ramachandran/J-coupling literature. The 9 curated input structures live in `data/<id>.pdb` (three-letter codes: `ala`, `gly`, `ile`, `leu`, `met`, `phe`, `pro`, `trp`, `val`).
