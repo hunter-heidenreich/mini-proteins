@@ -1,50 +1,65 @@
-# Capped-dipeptide benchmark suite — design
+# Capped-dipeptide framework — design
 
-A benchmark for **method development** on small biomolecular systems, not a
-production dataset for a better force field. The systems are deliberately tiny
-and their equilibrium/kinetic ground truth is knowable, so a method can be
-*scored*, not just demonstrated. Target method classes:
+**Purpose: a hands-on framework for learning the craft of generating MD data and
+benchmarking ML methods on small biomolecules — and doing it in a way that stays
+in conversation with the field.** This is explicitly *not* a novelty-or-bust
+research claim. Replicating known methods on these systems is a goal, not a
+compromise: the systems are tiny and their ground truth is knowable, so you can
+implement a method, check yourself against a known answer, and place the result
+next to the literature.
 
-1. **Reduced-representation modeling** — autoencoders / manifold learning that
-   collapse conformations into a low-dimensional latent.
-2. **Dynamics propagation & sampling** — transfer-operator / latent propagators
-   (VAMPnets, ITO-style) and equilibrium samplers (Boltzmann generators).
-3. **Generative / diffusion** — conformation diffusion and *video-diffusion*
-   (trajectory-segment generation, transition-path inpainting).
+Four interlocking tracks:
 
-This sits in a well-established line: dipeptide suites are the de-facto
-transferability benchmark for learned dynamics (Timewarp), latent propagators
-(Implicit Transfer Operators), and Boltzmann generators; torsional diffusion
-works on exactly the torsion torus these systems live on.
+- **Generate** — run the MD ourselves in OpenMM (the craft: force fields, solvent
+  tiers, thermostats, enhanced sampling, convergence).
+- **Certify** — our *lens*: audited convergence + reference observables, so the
+  ground truth is trustworthy rather than assumed.
+- **Interoperate** — use the data and metrics the field already uses (MDGen's
+  released trajectories; TICA / JSD / MSM evaluation), so results are directly
+  comparable and legible to others.
+- **Replicate** — re-implement canonical methods (MSM, TICA, Boltzmann generator,
+  trajectory generator) on the small systems as learning milestones.
 
-## Prior art & how this differs (verified against the papers)
+Method classes we want to be able to build/score: reduced-representation
+(autoencoders / manifold learning), dynamics propagators (transfer-operator /
+latent, Boltzmann generators), and generative / (video-)diffusion (trajectory
+generation, transition-path inpainting).
 
-| work | systems | engine / FF / solvent | what it does |
+## Related work — the landscape (our reading map)
+
+This is the conversation we want to be in, and the curriculum we learn from. The
+area moves fast; entries are dated. (Verified from the papers, not memory.)
+
+| work | year | systems | what it does |
 |---|---|---|---|
-| **Timewarp** (Klein 2023) | AD, 2AA, **4AA** | OpenMM / amber14 / implicit | transferable time-coarsened MD acceleration (normalizing flow) |
-| **MDGen** (Jing 2024) | **tetra/penta-peptides** | OpenMM / amber14 / gbn2 + tip3pfb | generative trajectories: forward sim, TPS, upsampling, inpainting, design |
-| **ITO** (Schreiner 2023) | alanine dipeptide + CG | OpenMM / — | multi-time-resolution latent propagators (SE(3) diffusion) |
-| **Transferable BG** (Klein 2024) | dipeptides | — / — | transferable zero-shot Boltzmann generators + reweighting |
+| **Timewarp** (Klein) | 2023 | AD, 2AA, 4AA | transferable time-coarsened MD acceleration (normalizing flow); OpenMM/amber14/implicit |
+| **ITO** (Schreiner) | 2023 | alanine dipeptide + CG | multi-time-resolution latent propagators (SE(3) diffusion); code released |
+| **Force-Guided Bridge Matching** (2408.15126) | 2024 | peptides | full-atom time-coarsened dynamics |
+| **Transferable BG** (Klein) | 2024 | dipeptides | transferable zero-shot Boltzmann generators + reweighting |
+| **MDGen** (Jing) | 2024 | **tetra/penta-peptides** | generative trajectories: forward sim, TPS, upsampling, inpainting, design; OpenMM/amber14/gbn2+tip3pfb. **Released data is the de-facto peptide standard** (HF `bjing-mit/tetrapeptide-sims`, explicit+implicit) |
+| **survey of generative frameworks** (2411.09388) | 2024 | Aib9 + toy | NSF vs CFM vs DDPM comparison; notes molecular benchmarking is "lacking" |
+| **SBG — Sequential Boltzmann Generators** (2502.18462) | 2025 (ICML) | tri/tetra/**hexa**-peptides | SOTA Cartesian equilibrium sampling via flow + SMC |
+| **Beyond Ensembles / GLDP** (2509.02196) | 2025 | peptides → GPCRs | encoder→propagator→decoder latent dynamics; compares Langevin/Koopman/autoregressive propagators via TICA |
+| **Amortized Sampling / transferable flows** (2508.18175) | 2025 | peptides | transferable normalizing-flow sampling |
+| **ATMOS — State Space Models** (2603.17633) | 2026 | proteins (mdCATH), protein–ligand (MISATO) | SSM trajectory modeling; compares MDGen/TEMPO/ConfRover/AlphaFlow-MD/ESMFlow-MD |
+| **Align Your Structures** (2604.03911) | 2026 (ICLR) | tetrapeptides | structure-pretrained trajectory generation; **evaluates on MDGen data + MDGen's MSM/JSD pipeline** |
 
-Two consequences this benchmark is designed around:
+Reading of the landscape (what it means for us, not as a threat model):
 
-1. **Dipeptides alone are largely solved** — Timewarp/MDGen have moved to
-   tetra/pentapeptides. So the dipeptide suite is positioned as the
-   **interpretable diagnostic floor**, not the frontier, with tetrapeptides
-   planned (Phase 5). The frontier-relevance comes from Phase 5; the dipeptides'
-   value is being *controlled and known*.
-2. **The differentiation is rigor, not systems.** The released datasets above are
-   "we ran it." None ship *certified-converged ground truth*: audited
-   convergence (effective samples, transition counts), per-DOF convergence
-   gating, a shipped MSM/FES answer key, honest kinetic ceilings (e.g. cis/trans
-   ω declared out of scope), literature-anchored validation, and a *per-residue
-   diagnostic curriculum with known slow DOFs*. That is the niche — the
-   **validated/diagnostic** benchmark methods can be *scored and debugged*
-   against, not just trained on.
+- **Dipeptides are the solved floor; the frontier is tetra→hexa-peptides and
+  proteins.** We use dipeptides as the *interpretable place to learn* (known
+  answers, fast), then climb (tetrapeptides, Phase 5).
+- **Data + metrics have a de-facto standard** (MDGen's released peptide
+  trajectories; TICA / JSD / MSM-timescale evaluation, reused by Align-Your-
+  Structures and GLDP). We adopt these so our work is comparable — the point of
+  "interoperate."
+- **What's still thin is certified ground truth** — papers train/evaluate on raw
+  trajectories with no convergence audit. That's where our *certify* lens adds
+  real value, but as a contribution-of-flavor, not a territorial claim.
 
-To stay cross-comparable we adopt their conventions where sensible: ff14SB,
-gbn2/TIP3P, OpenMM, the transferability split, torsion (sin/cos) featurization →
-TICA, and Jensen–Shannon divergence as a distributional metric (see Metrics).
+To stay comparable we adopt the shared conventions: OpenMM, ff14SB, gbn2/TIP3P,
+the transferability split, torsion (sin/cos) → TICA featurization, and
+Jensen–Shannon divergence + MSM implied timescales as metrics (see Metrics).
 
 ## Systems — the difficulty curriculum
 
@@ -179,11 +194,13 @@ not assumed:
 
 Documented per residue, so the kinetic claims are auditable.
 
-## Benchmark tasks & metrics (the leaderboard)
+## Tasks & metrics (for comparison, not a leaderboard claim)
 
 Shared featurization (MDGen convention, for cross-comparability): sin/cos of all
 torsions (φ,ψ,χ,ω) → **TICA** (deeptime/PyEMMA). Primary distributional metric:
 **Jensen–Shannon divergence** on the TICA components and per-DOF marginals.
+Using the field's metrics is itself the point — it makes a replicated method's
+result legible next to the paper it came from.
 
 | task | method class | metric vs ground truth |
 |---|---|---|
@@ -197,19 +214,30 @@ good iff its implied FES/TICA and timescales match the MD's.
 
 ## Roadmap
 
-- **Phase 0 — curation layer (engine-agnostic).** Export + reference-observable
-  computer + correlation-aware/transferability splits, runnable on the existing
-  GROMACS alanine data. Unblocks ML immediately.
+Sequenced so each phase produces something learnable and comparable, not just
+infrastructure. The four tracks (generate / certify / interoperate / replicate)
+run through all of them.
+
+- **Phase 0 — curation & analysis layer (the foundation, engine-agnostic).** One
+  deliverable that serves all four tracks: reads **both** our OpenMM output (DCD)
+  **and** MDGen's released trajectories; computes the field-standard observables
+  (torsions → **TICA → JSD**, **MSM implied timescales** via deeptime/PyEMMA) —
+  re-deriving the alanine MSM is the first *replication* milestone (known answer,
+  self-checkable); and carries our **convergence certification** on top.
+  Correlation-aware + transferability splits. Runs on the existing GROMACS
+  alanine data today.
 - **Phase 1 — OpenMM generation skeleton.** Plain MD, both tiers (ff14SB), the
-  Ala/Gly/Pro shake-out. Plus the one-off ff03 cross-engine check against
-  GROMACS. *(Ships with this doc: `benchmark/simulate.py`,
-  `benchmark/systems.py`.)*
+  Ala/Gly/Pro shake-out; one-off ff03 cross-engine check against GROMACS.
+  *(Ships with this doc: `benchmark/simulate.py`, `benchmark/systems.py`.)*
 - **Phase 2 — kinetics.** Adaptive-sampling/MSM; ship MSM timescales; ω
   thermodynamics-only.
 - **Phase 3 — scale to all 9 dipeptides, both tiers**, with per-DOF convergence
   gating.
-- **Phase 4 — define tasks/metrics/splits as a released benchmark.**
+- **Phase 4 — replication milestones.** Re-implement canonical methods on the
+  certified small systems and score them with the shared metrics: a TICA/MSM
+  reduced model, a small Boltzmann generator (Tier 2, uses `u(x)`), an
+  MDGen-style trajectory generator. Each is a learning unit *and* a comparable
+  result.
 - **Phase 5 — tetrapeptides.** Extend to 4-mers for frontier relevance
-  (Timewarp/MDGen scale), using the dipeptides as the interpretable floor.
-  Requires a sequence-sampling design (which 4-mers) on top of the proven
-  pipeline.
+  (Timewarp/MDGen scale), ideally **ingesting MDGen's released tetrapeptide data**
+  so our certification/analysis layers apply directly to the data the field uses.
