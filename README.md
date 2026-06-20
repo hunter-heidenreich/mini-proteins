@@ -126,10 +126,20 @@ Hu 2003 ([Ace-Ala/Gly-Nme maps](https://doi.org/10.1002/prot.10279)),
 Duan 2003 ([ff03 definition](https://doi.org/10.1002/jcc.10349)).
 
 **Note on Amber03's Ramachandran balance:** ff03 gives a prominent right-handed
-helical basin for the alanine dipeptide (αR + α′ ≈ 42% in the reference above),
-larger than the near-pure-PPII picture from peptide NMR. This is the documented
+helical basin for the alanine dipeptide (αR + α′ ≈ 42% under the reference's
+partition, matching Vymětal & Vondrášek 2010), larger than the near-pure-PPII
+picture from peptide NMR. This is the documented
 [over-helical](https://doi.org/10.1529/biophysj.108.132696) bias of the Amber
 line, not a simulation error — a healthy ff03 run is *expected* to reproduce it.
+
+The refined partition in `analyze.py` adds a sharper detail the coarse
+literature box hides: that "helical" density is **C7eq/bridge-dominated**
+(ψ ≈ 0), not canonical α-helix (ψ ≈ −45). In our 5 × 100 ns alanine run, true
+αR is only ~21% while the bridge basin is ~25% — they sum to the ~46% that a
+single broad αR box (like the reference's) reports as one number. Likewise the
+backbone ³J(HN,Hα) lands ~1.1 Hz above experiment under the *same* Karplus
+parameterization Graf 2007 used (Hu & Bax), i.e. a real ensemble difference
+consistent with that helical/bridge excess, not an analysis artifact.
 
 ### All-in-one
 
