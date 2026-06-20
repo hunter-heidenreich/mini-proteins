@@ -212,6 +212,20 @@ result legible next to the paper it came from.
 Metrics are **distributional/kinetic**, not per-frame: a generated trajectory is
 good iff its implied FES/TICA and timescales match the MD's.
 
+## Storage & durability (RunPod is ephemeral)
+
+Three tiers; nothing valuable lives *only* on the compute box.
+
+| where | what | why |
+|---|---|---|
+| **git / GitHub** | code, configs, input PDBs, docs, env lock, **small certified reports** (`results/`) | durable, versioned, small |
+| **RunPod** (scratch) | raw/intermediate trajectories, the GPU env | large, regenerable from code + seeds in `meta.json` |
+| **HuggingFace** | `curated.npz` + any trajectories worth keeping — the published artifact | too big for git; durable + shareable; the "in conversation" deliverable |
+
+`scripts/pull_results.sh` moves the small reports from the gitignored `out/` into
+the versioned `results/` before the pod is stopped; big data is pushed to HF. See
+`docs/cloud-run.md` for the pre-shutdown checklist.
+
 ## Roadmap
 
 Sequenced so each phase produces something learnable and comparable, not just

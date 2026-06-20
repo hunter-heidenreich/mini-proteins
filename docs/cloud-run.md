@@ -81,12 +81,28 @@ bias, expected for a correct ff03 run. The convergence section (effective sample
 count, basin-transition counts, half/half stationarity) and replica-to-replica
 agreement are the checks that the run itself is sound.
 
-## 7. Pull results
+## 7. Before you stop the pod (RunPod is ephemeral — the disk is gone when it dies)
 
-```bash
-tar czf ala-data.tgz out/ala/data out/ala/figs
-# then scp/rsync ala-data.tgz down (or use the provider's file browser)
-```
+Nothing valuable may live *only* on the pod. Three destinations:
+
+1. **Small certified reports → git.** They live in the gitignored `out/` tree, so
+   pull them into the versioned `results/` dir and commit:
+   ```bash
+   sh scripts/pull_results.sh      # copies validation.*/curation.*/figs -> results/
+   git add results && git commit -m "results: <id> certified reports" && git push
+   ```
+2. **The environment recipe → git.** Pin what actually worked on the GPU box:
+   ```bash
+   pip freeze > requirements-ml.lock && git add requirements-ml.lock && git commit -m "lock ml env"
+   ```
+3. **Big data → HuggingFace** (the durable, shareable home — mirrors the field's
+   convention). The curated arrays and any trajectories you want to keep:
+   ```bash
+   # curated.npz per (id, tier) + raw trajectories you care about
+   huggingface-cli upload <your-namespace>/mini-proteins-bench out/<id>/<tier>/curated.npz
+   ```
+   Raw `.trr/.dcd` are regenerable from the code + the seeds in `meta.json`, so
+   they're optional to keep; `curated.npz` + the reports are what matter.
 
 Only after alanine checks out do we scale to gly + the rest (same commands,
 different `ID`).

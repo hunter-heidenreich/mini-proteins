@@ -27,6 +27,12 @@ The Python scripts are invoked by the shell scripts and also read `ID` from the 
 
 There are no tests, linters, or a build step — this is a simulation pipeline, not an application.
 
+### Storage tiers (RunPod is ephemeral — nothing valuable lives only there)
+
+- **git:** code, configs, input PDBs, docs, env lock (`requirements-ml.lock`), and **small certified reports** committed under `results/` (the `out/` tree is gitignored, so `scripts/pull_results.sh` copies `validation.*`/`curation.*`/figures into `results/` for committing — run it before stopping the pod).
+- **RunPod (scratch):** raw/intermediate trajectories + the GPU env; regenerable from code + the seeds in each run's `meta.json`.
+- **HuggingFace:** `curated.npz` and any trajectories worth keeping — too big for git, the durable/shareable deliverable.
+
 ### Benchmark suite (OpenMM, newer work — see `docs/benchmark.md`)
 
 A second, in-progress track is a **learning + interoperable framework** (`docs/benchmark.md`) for the craft of generating MD data and benchmarking ML methods (reduced-representation, dynamics propagators, generative/diffusion) on these dipeptides. Goal is learning + being comparable to the field, **not** novelty: four tracks — generate (OpenMM), certify (convergence/ground-truth rigor, our lens), interoperate (use MDGen's released data + TICA/JSD/MSM metrics so results are comparable), replicate (re-implement canonical methods as milestones). It is **single-engine OpenMM** with two solvent tiers — explicit TIP3P/PME (realism) and implicit **GBn2** (generative — tractable `u(x)` for Boltzmann generators). Force field is **amber14/ff14SB** across both, chosen for comparability with the literature this benchmark targets (MDGen, Timewarp, Transferable BG; all OpenMM/amber14). `ff03` is kept **only** for a one-off GROMACS cross-engine check (`--forcefield amber03.xml tip3p.xml --temperature 298 --friction 10` → match the GROMACS ff03 FES; a thermodynamics check). Field-aligned defaults: 310 K, 2 fs + HBond constraints, friction 0.1/0.3 ps⁻¹, 100 fs save stride. The differentiator vs existing released datasets is **rigor** (certified-converged ground truth, per-DOF convergence gating, shipped MSM/FES answer key, honest kinetic ceilings) not system size; tetrapeptides are Phase 5.
