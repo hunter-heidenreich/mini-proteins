@@ -36,11 +36,19 @@ CAPS = {"ACE", "NME", "NAC", "NH2", "NHE"}
 # Approximate Ramachandran basins (degrees). Boundaries are conventional and
 # coarse; the FES figure is the primary artifact, these just give populations.
 # Checked in order; first match wins, otherwise 'other'.
+#
+# alphaR is kept narrow (psi ~ -120..-20) so it counts *canonical* right-handed
+# helix only. The psi~0 density at helical phi -- the alphaR/C7eq "bridge" that
+# lies between alphaR and PPII -- gets its own region instead of inflating the
+# helix count (an earlier, broad alphaR box reached up to psi=+45 and absorbed
+# it). alphaR and alphaL are exact mirrors so the glycine symmetry check (which
+# compares their populations) stays fair; bridge is the L-residue region only.
 REGIONS = [
-    ("alphaR", lambda p, s: -160 <= p <= -20 and -100 <= s <= 45),
-    ("alphaL", lambda p, s: 20 <= p <= 160 and -45 <= s <= 100),
-    ("PPII", lambda p, s: -100 <= p <= -20 and (s > 45 or s < -150)),
-    ("beta", lambda p, s: -180 <= p < -100 and (s > 90 or s < -150)),
+    ("alphaR", lambda p, s: -160 <= p <= -20 and -120 <= s <= -20),
+    ("alphaL", lambda p, s: 20 <= p <= 160 and 20 <= s <= 120),
+    ("PPII", lambda p, s: -110 <= p <= -20 and (s > 90 or s < -160)),
+    ("beta", lambda p, s: -180 <= p < -110 and (s > 90 or s < -160)),
+    ("bridge", lambda p, s: -160 <= p <= -20 and -20 < s <= 90),
 ]
 
 
