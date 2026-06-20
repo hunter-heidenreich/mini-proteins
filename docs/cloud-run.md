@@ -70,10 +70,16 @@ ID=ala sh scripts/4_analyze.sh
 
 Check `out/ala/figs/rama_fes.png` and `out/ala/data/validation.txt` against the
 references in `scripts/analyze.py` (Vymětal & Vondrášek 2010 for the ff03 FES;
-Graf 2007 / Best 2008 for ³J couplings). Expected for alanine in water: PPII and
-β/C5 dominant, αR a minor populated basin, αL essentially unsampled (a known
-limit of plain MD — not a bug). Replica-to-replica agreement in the population
-table is the convergence check.
+Graf 2007 / Best 2008 for ³J couplings). The report prints the populations
+side-by-side with the Vymětal ff03/TIP3P numbers, so agreement is read directly.
+Expected for **Amber03** alanine in water: a prominent right-handed helical basin
+(their αR + α′ ≈ 42%) co-dominant with the PPII-like β basin (≈ 41%), an extended
+C5 minority (≈ 17%), and αL essentially unsampled (≈ 0.1% — a documented ff03
+trait plus a plain-MD limit, not a bug). Note this is *more* helical than the
+near-pure-PPII picture from peptide NMR; that gap is Amber's known over-helical
+bias, expected for a correct ff03 run. The convergence section (effective sample
+count, basin-transition counts, half/half stationarity) and replica-to-replica
+agreement are the checks that the run itself is sound.
 
 ## 7. Pull results
 

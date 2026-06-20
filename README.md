@@ -91,17 +91,45 @@ This is done by running the `4_analyze.sh` script:
 ID=ala sh scripts/4_analyze.sh
 ```
 
-This script computes backbone dihedrals (`gmx rama`) across all replicas and produces:
-- A φ/ψ **free-energy surface** (`figs/rama_fes.png`) and dihedral marginals
-- **Basin populations** (αR / αL / PPII / β) with per-replica mean±std — agreement across replicas is the convergence check
-- For **glycine**, a (φ,ψ)→(−φ,−ψ) **symmetry index** (must approach 0 at convergence)
-- **Karplus ³J(HN,Hα)** predicted from φ, for comparison with NMR
+This script computes backbone dihedrals (`gmx rama`) across all replicas and
+writes a single validation + dataset-QC report (`out/${ID}/data/validation.txt`,
+plus a machine-readable `validation.json`) designed to be credible to a
+computational chemist. It contains:
 
-Results are written to `out/${ID}/data/validation.txt`. Comparison references:
+- **Provenance** — engine version, force field/water, integrator, constraints,
+  system size, sampling, seeds, and git commit.
+- **Sampling & convergence** — statistical inefficiency `g` and effective
+  independent sample count (φ/ψ are autocorrelated, so raw frame counts
+  overstate the data), helical↔extended **basin-transition counts** (Hu 2003
+  ergodicity check), and a first-half vs second-half stationarity test.
+- **Backbone ensemble** — φ/ψ **free-energy surface** (`figs/rama_fes.png`,
+  kcal/mol, contoured and basin-labeled), marginals, a cumulative-population
+  **convergence plot** (`figs/convergence.png`), and basin populations + per-basin
+  free energies under a refined partition.
+- **Direct literature comparison** — populations under the published Wang–Duan
+  partition printed side-by-side with Vymětal & Vondrášek 2010 (the same
+  ff03/TIP3P force field + water model).
+- **J-couplings** — ³J(HN,Hα) under several Karplus parameterizations (the choice
+  swings ~1 Hz; Best 2008) vs the experimental range for short Ala peptides.
+- **Force-label QC** — the actual ML product: |F| distribution, outlier/max-force
+  and non-finite checks, and the lag-1 force autocorrelation that justifies the
+  1 ps sampling stride (forces decorrelate fast; configurations do not).
+- **Thermodynamic stability** — temperature/energy drift slopes (note: `sd` is
+  thermostatted, so the check is stationarity, not energy conservation).
+- For **glycine**, a (φ,ψ)→(−φ,−ψ) **symmetry index** (→ 0 at convergence).
+
+Comparison references:
 Vymětal & Vondrášek 2010 ([ff03 FES](https://doi.org/10.1021/jp100950w)),
 Graf 2007 / Best 2008 (J-couplings: [JACS](https://doi.org/10.1021/ja0660406),
 [Biophys. J.](https://doi.org/10.1529/biophysj.108.132696)),
-Hu 2003 ([Ace-Ala/Gly-Nme maps](https://doi.org/10.1002/prot.10279)).
+Hu 2003 ([Ace-Ala/Gly-Nme maps](https://doi.org/10.1002/prot.10279)),
+Duan 2003 ([ff03 definition](https://doi.org/10.1002/jcc.10349)).
+
+**Note on Amber03's Ramachandran balance:** ff03 gives a prominent right-handed
+helical basin for the alanine dipeptide (αR + α′ ≈ 42% in the reference above),
+larger than the near-pure-PPII picture from peptide NMR. This is the documented
+[over-helical](https://doi.org/10.1529/biophysj.108.132696) bias of the Amber
+line, not a simulation error — a healthy ff03 run is *expected* to reproduce it.
 
 ### All-in-one
 
