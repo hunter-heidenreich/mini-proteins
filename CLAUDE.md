@@ -27,6 +27,15 @@ The Python scripts are invoked by the shell scripts and also read `ID` from the 
 
 There are no tests, linters, or a build step — this is a simulation pipeline, not an application.
 
+### Benchmark suite (OpenMM, newer work — see `docs/benchmark.md`)
+
+A second, in-progress track repurposes the dipeptides as a **method-development benchmark** (reduced-representation, dynamics propagators, generative/diffusion). It is **single-engine OpenMM** (the GROMACS pipeline above is retained as a cross-engine validation anchor — re-run Ala-explicit in OpenMM and confirm it reproduces the GROMACS FES). Two solvent tiers: explicit TIP3P (realism) and implicit GB/OBC2 (generative — tractable `u(x)` for Boltzmann generators). `ff03` across both for comparability.
+
+- `benchmark/systems.py` — per-residue metadata (slow DOFs incl. side-chain χ / Pro ω+pucker, difficulty, rare processes, transferability split). Single source of truth for what each system's ground truth must cover; φ/ψ convergence ≠ full convergence.
+- `benchmark/simulate.py` — Phase-1 OpenMM generation skeleton (plain MD, both tiers): `python -m benchmark.simulate --residue ala --tier explicit --ns 100 --replica 1 --seed 1`. Explicit tier mirrors the GROMACS protocol (rigid water, flexible solute, Langevin friction = 1/tau_t) for the cross-validation. Outputs to `out/<id>/<tier>/r<n>/`.
+- `benchmark/run_shakeout.sh` — drives the Ala/Gly/Pro trio × both tiers × replicas.
+- Phases 2+ (REST2 for rare-event equilibrium, adaptive-sampling→MSM for kinetics, curation/splits/metrics) are specified in `docs/benchmark.md` but not yet built. `cis/trans ω` is scoped to thermodynamics only (seconds-timescale rate is beyond reach).
+
 ## Architecture & conventions
 
 - **Output layout** (all gitignored under `out/`): `out/<id>/raw/` holds GROMACS working files (`.tpr`, `.gro`, `.trr`, `.cpt`, intermediate `.xvg`); `out/<id>/data/` holds final products; `out/<id>/figs/` holds PNG plots. `3_post.sh` is what moves files from `raw/` → `data/`.

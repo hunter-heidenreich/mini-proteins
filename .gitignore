@@ -3,3 +3,5 @@
 out/
 .venv/
 mdout.mdp
+__pycache__/
+*.pyc
