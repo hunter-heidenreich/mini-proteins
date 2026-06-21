@@ -47,9 +47,42 @@ see `docs/cloud-run.md`; for commands see `CLAUDE.md`.
 |---|---|
 | numpy cores (dihedral, certify stats, FES, JSD) | ✅ unit-tested locally |
 | uv sync / uv run / imports / `uv lock --check` | ✅ locally |
-| OpenMM generation (`simulate.py`) | ⏳ never run — needs openmm + GPU |
-| TICA/MSM (`observables.py`, deeptime) | ⏳ guarded; deeptime API unverified |
-| MDTraj trajectory loading (`features.py`) | ⏳ unverified on real DCD/TRR |
+| OpenMM generation (`simulate.py`) | ✅ both tiers run end-to-end on GPU (2026-06-21, see infra note) |
+| TICA/MSM (`observables.py`, deeptime) | ✅ runs on real DCD (deeptime 0.4.5); ala MSM slow timescale 76 ps |
+| MDTraj trajectory loading (`features.py`) | ✅ loaded 100k-frame explicit DCD, φ/ψ extracted |
+
+**Infra note (2026-06-21, RTX 4000 Ada box).** Two things the checklist's
+`PLATFORM=CUDA` assumption got wrong on this box:
+- **No CUDA platform in the PyPI openmm wheel** (8.5.2 ships Reference/CPU/OpenCL
+  only). The box's NVIDIA OpenCL driver was present but **unregistered** — fixed by
+  writing `/etc/OpenCL/vendors/nvidia.icd` (one line: `libnvidia-opencl.so.1`).
+  After that `Platform.getPlatformByName('OpenCL')` builds contexts on the GPU.
+  **Use `PLATFORM=OpenCL`, not CUDA**, for all `benchmark/` runs on this box (or
+  install a conda openmm with the real CUDA platform for more speed).
+- **Explicit-tier box-size crash fixed.** Default `--padding 1.0` gave a 2.0 nm box
+  = exactly 2x the 1.0 nm cutoff; the NPT barostat compressed it below the limit and
+  OpenMM aborted ("periodic box size has decreased to less than twice the nonbonded
+  cutoff"). Bumped the `simulate.py` default to `--padding 1.2` (2.4 nm box, ~1287
+  atoms, headroom). PME cutoff invariant untouched.
+- **conda CUDA env (chosen path).** Installed micromamba + a `omm` env with the
+  full benchmark ml stack and the real CUDA platform:
+  ```
+  curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xj bin/micromamba
+  export MAMBA_ROOT_PREFIX=/root/micromamba
+  /root/bin/micromamba create -y -n omm -c conda-forge python=3.11 \
+    "openmm>=8.1" "cuda-version=12.4" mdtraj deeptime scikit-learn numpy scipy matplotlib
+  ```
+  (openmm 8.2.0, CUDA platform builds contexts on the Ada GPU.) `run_shakeout.sh`
+  now takes a `PYRUN` override; drive it with conda CUDA via:
+  ```
+  MAMBA_ROOT_PREFIX=/root/micromamba PYRUN="/root/bin/micromamba run -n omm python" \
+    PLATFORM=CUDA NS=20 sh benchmark/run_shakeout.sh
+  ```
+  Both the env and the OpenCL ICD file live on the ephemeral container disk —
+  re-run these on a fresh pod.
+- Throughput: explicit 1287 atoms — OpenCL **582** / CUDA **744** ns/day; implicit
+  22 atoms — OpenCL **735** / CUDA **1170** ns/day. Full `NS=20` shake-out (360 ns)
+  ≈ **9.5 GPU-hours** on CUDA (~13 on OpenCL).
 
 ## Next actions — on RunPod, in order
 

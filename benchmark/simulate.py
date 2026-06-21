@@ -217,8 +217,12 @@ def build_parser():
                    help="override ff xml files, e.g. amber03.xml tip3p.xml "
                         "(for the GROMACS ff03 cross-engine check)")
     p.add_argument("--cutoff", type=float, default=1.0, help="PME cutoff (nm)")
-    p.add_argument("--padding", type=float, default=1.0,
-                   help="solvent box padding (nm), explicit only")
+    p.add_argument("--padding", type=float, default=1.2,
+                   help="solvent box padding (nm), explicit only. Must keep the "
+                        "box edge > 2x cutoff even after the NPT barostat "
+                        "compresses it: with cutoff=1.0, padding=1.0 gives a "
+                        "2.0 nm box (exactly the limit) and crashes; 1.2 -> "
+                        "2.4 nm leaves headroom.")
     p.add_argument("--ionic-strength", type=float, default=0.1,
                    help="salt concentration (mol/L), explicit only")
     p.add_argument("--seed", type=int, default=1,
