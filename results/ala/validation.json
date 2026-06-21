@@ -1,0 +1,193 @@
+{
+  "sampling": {
+    "replicas": 5,
+    "frames_total": 500005,
+    "ns_per_replica": 100.0,
+    "statistical_inefficiency_g": 440.9,
+    "effective_independent_samples": 1134,
+    "phi_decorrelation_time_ps": 8.0,
+    "helical_extended_transitions_per_replica": [
+      722,
+      603,
+      617,
+      662,
+      699
+    ],
+    "transitions_per_ns_mean": 6.61,
+    "max_first_vs_second_half_pop_diff": 0.038
+  },
+  "populations_refined": {
+    "alphaR": {
+      "mean": 0.2061,
+      "std": 0.0107
+    },
+    "alphaL": {
+      "mean": 0.0005,
+      "std": 0.0006
+    },
+    "PPII": {
+      "mean": 0.3369,
+      "std": 0.0156
+    },
+    "beta": {
+      "mean": 0.1763,
+      "std": 0.009
+    },
+    "bridge": {
+      "mean": 0.2516,
+      "std": 0.0124
+    },
+    "other": {
+      "mean": 0.0287,
+      "std": 0.0023
+    }
+  },
+  "basin_free_energy_kcal_per_mol": {
+    "alphaR": 0.29,
+    "alphaL": 3.91,
+    "PPII": -0.0,
+    "beta": 0.38,
+    "bridge": 0.17,
+    "other": 1.46
+  },
+  "comparison_vymetal2010": {
+    "alphaR": {
+      "ours_pct": [
+        40.2,
+        2.0
+      ],
+      "vymetal2010_pct": [
+        37.5,
+        2.6
+      ]
+    },
+    "alpha_prime": {
+      "ours_pct": [
+        6.1,
+        0.4
+      ],
+      "vymetal2010_pct": [
+        5.0,
+        0.3
+      ]
+    },
+    "beta": {
+      "ours_pct": [
+        36.4,
+        1.7
+      ],
+      "vymetal2010_pct": [
+        40.8,
+        2.4
+      ]
+    },
+    "C5": {
+      "ours_pct": [
+        16.4,
+        0.8
+      ],
+      "vymetal2010_pct": [
+        16.6,
+        0.9
+      ]
+    },
+    "alphaL": {
+      "ours_pct": [
+        0.2,
+        0.2
+      ],
+      "vymetal2010_pct": [
+        0.11,
+        0.01
+      ]
+    },
+    "alphaD": {
+      "ours_pct": [
+        0.0,
+        0.1
+      ],
+      "vymetal2010_pct": [
+        0.03,
+        0.0
+      ]
+    },
+    "other": {
+      "ours_pct": [
+        0.7,
+        0.0
+      ],
+      "vymetal2010_pct": null
+    }
+  },
+  "J_HN_Ha_Hz": {
+    "Hu-Bax-1997": {
+      "mean": 6.79,
+      "std": 0.01
+    },
+    "Vuister-Bax-1993": {
+      "mean": 6.75,
+      "std": 0.01
+    },
+    "Wang-Bax-1996": {
+      "mean": 6.86,
+      "std": 0.01
+    }
+  },
+  "J_HN_Ha_experiment_Hz": {
+    "range": [
+      5.59,
+      5.68
+    ],
+    "source": "Graf 2007 (doi:10.1021/ja0660406) Table 3, interior Ala",
+    "karplus_matched_set": "Hu-Bax-1997",
+    "matched_minus_exp_Hz": 1.15
+  },
+  "force_labels": {
+    "units": "kJ/mol/nm (GROMACS); x KJNM_TO_KCALA for kcal/mol/Angstrom",
+    "n_solute_atoms": 22,
+    "mean_abs_force": 1242.4,
+    "median_abs_force": 1053.4,
+    "p99_abs_force": 3615.8,
+    "max_abs_force": 7403.7,
+    "max_abs_force_kcal_per_mol_A": 176.95,
+    "nonfinite_values": 0,
+    "lag1_force_autocorr_mean": -0.002
+  },
+  "thermo_stability": {
+    "note": "sd is thermostatted -> stationarity (drift~0), not energy conservation",
+    "temperature_K": {
+      "mean": 298.21,
+      "drift_per_ns": 0.0,
+      "drift_per_ns_abs_max": 0.001
+    },
+    "total_energy_kJ_per_mol": {
+      "mean": -26014.69,
+      "drift_per_ns": 0.002,
+      "drift_per_ns_abs_max": 0.038
+    }
+  },
+  "provenance": {
+    "residue": "ala",
+    "force_field": "amber03",
+    "water_model": "tip3p",
+    "integrator": "sd (Langevin)",
+    "timestep_ps": 0.001,
+    "ref_temperature_K": 298.0,
+    "solute_constraints": "none (flexible -- complete force labels)",
+    "water_constraints": "rigid (SETTLE)",
+    "electrostatics": "PME, 1.0 nm cutoff",
+    "sample_stride_ps": 1.0,
+    "n_solute_atoms": 22,
+    "n_frames_total": 500005,
+    "gromacs_version": "2026.2",
+    "n_waters": 772,
+    "seeds": [
+      2029780987,
+      -1330118919,
+      -42992717,
+      -1133527115,
+      -51419202
+    ],
+    "git_commit": "693e639"
+  }
+}

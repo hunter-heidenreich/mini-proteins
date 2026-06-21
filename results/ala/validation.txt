@@ -1,0 +1,55 @@
+Validation report: ala    (capped dipeptide, plain unbiased MD)
+====================================================================
+
+PROVENANCE
+  engine          2026.2   git 693e639
+  force field     amber03 / tip3p   PME, 1.0 nm cutoff
+  integrator      sd (Langevin), dt=0.001 ps, ref_T=298.0 K
+  constraints     solute: none (flexible -- complete force labels); water: rigid (SETTLE)
+  system          22 solute atoms, 772 waters
+  sampling        5 replicas x 100.0 ns, 500005 frames @ 1.0 ps
+  seeds           [2029780987, -1330118919, -42992717, -1133527115, -51419202]
+
+SAMPLING & CONVERGENCE
+  statistical inefficiency g     440.9 (phi decorrelation ~8.0 ps)
+  effective independent samples  1,134 (of 500,005 frames)
+  helical<->extended transitions 6.61 /ns per replica  [722, 603, 617, 662, 699]
+  stationarity (1st vs 2nd half) max pop diff 0.038 (OK)
+
+BACKBONE ENSEMBLE -- refined partition (mean +/- std across replicas)
+  alphaR   0.206 +/- 0.011   dF=+0.29 kcal/mol
+  alphaL   0.001 +/- 0.001   dF=+3.91 kcal/mol
+  PPII     0.337 +/- 0.016   dF=-0.00 kcal/mol
+  beta     0.176 +/- 0.009   dF=+0.38 kcal/mol
+  bridge   0.252 +/- 0.012   dF=+0.17 kcal/mol
+  other    0.029 +/- 0.002   dF=+1.46 kcal/mol
+
+COMPARISON vs Vymetal & Vondrasek 2010, ff03/TIP3P (same FF+water)
+  (populations under their Wang-Duan partition; percent)
+  state                  ours        reference
+  alphaR        40.2 +/-  2.0     37.5 +/- 2.6
+  alpha_prime    6.1 +/-  0.4      5.0 +/- 0.3
+  beta          36.4 +/-  1.7     40.8 +/- 2.4
+  C5            16.4 +/-  0.8     16.6 +/- 0.9
+  alphaL         0.2 +/-  0.2      0.1 +/- 0.0
+  alphaD         0.0 +/-  0.1      0.0 +/- 0.0
+  other          0.7 +/-  0.0               --
+
+J-COUPLING  3J(HN,Ha) [Hz]  (Karplus choice swings ~1 Hz; Best 2008)
+  Hu-Bax-1997        6.79 +/- 0.01  <- Graf 2007's Karplus set
+  Vuister-Bax-1993   6.75 +/- 0.01
+  Wang-Bax-1996      6.86 +/- 0.01
+  experiment         5.59-5.68   (Graf 2007 (doi:10.1021/ja0660406) Table 3, interior Ala)
+  parameterization-matched gap: +1.15 Hz (real ensemble difference, not a Karplus artifact)
+
+FORCE-LABEL QC (the ML training product; kJ/mol/nm)
+  solute atoms        22
+  |F| median / mean   1053.4 / 1242.4
+  |F| p99 / max       3615.8 / 7403.7 (176.95 kcal/mol/A)
+  non-finite values   0 (OK)
+  lag-1 |F| autocorr  -0.002 (decorrelated at 1 ps -> independent labels)
+
+THERMODYNAMIC STABILITY
+  (sd is thermostatted -> stationarity (drift~0), not energy conservation)
+  temperature   298.21 K, drift 0.0 K/ns (|max| 0.001)
+  total energy  drift 0.002 kJ/mol/ns (|max| 0.038)
