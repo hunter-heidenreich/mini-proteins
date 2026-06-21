@@ -1,7 +1,7 @@
 # Status & next actions
 
 The single "where are we / what's next" file — open this to pick up without
-re-reading chat history. Keep it current. (As of commit `eb3faf2`, 2026-06.)
+re-reading chat history. Keep it current. (As of 2026-06-21.)
 
 For the *why* behind the design see `docs/benchmark.md`; for the box procedure
 see `docs/cloud-run.md`; for commands see `CLAUDE.md`.
@@ -18,6 +18,15 @@ see `docs/cloud-run.md`; for commands see `CLAUDE.md`.
   forces clean. Findings: ff03's "helix" is **bridge/C7eq-dominated** (canonical
   αR≈0.21, bridge≈0.25), and ⟨³J⟩ is **+1.15 Hz** vs experiment under Graf's own
   Karplus set (a real ensemble difference, ff03's known over-helical bias).
+- **Alanine fully persisted & raw reclaimed (2026-06-21).** Certified report
+  (`validation.*` + figures) committed + pushed to git under `results/ala/`. The
+  big data products — gzipped force labels + PBC trajectories (5 replicas, 1.3 GB
+  → 249 MB) + a `README.md` manifest — uploaded to HF
+  `hheiden/mini-proteins-bench/ala/gromacs-ff03/` (commit `dd39360`). The ~27 GB
+  of raw `.trr`/`.edr`/`.log` and the local `out/ala/data/` are **deleted**;
+  `out/ala` is now ~34 MB (figs + small restart/rama files). Regenerable from the
+  seeds in `validation.json`. **`gh` and the modern `hf` CLI are installed on the
+  box** (container disk).
 
 **Benchmark track (OpenMM, single-engine, ff14SB, two tiers) — written, partially verified.**
 - `benchmark/systems.py` — 9-residue metadata (slow DOFs incl. χ / Pro ω+pucker),
@@ -60,8 +69,10 @@ uv run --extra ml python -m benchmark.simulate --residue ala --tier explicit \
 uv run --extra ml python -m benchmark.curate --residue ala --tier explicit
 # 6. before stopping the pod: persist
 sh scripts/pull_results.sh && git add results && git commit -m "results: shake-out" && git push
-uv run --extra ml huggingface-cli upload --repo-type dataset \
-  hheiden/mini-proteins-bench out/ala/explicit/curated.npz ala/explicit/curated.npz
+# HF uses the modern `hf` CLI (huggingface-cli is deprecated); hf is installed
+# standalone at /root/.local/bin/hf, no `uv run` needed. Xet is on by default.
+HF_XET_HIGH_PERFORMANCE=1 hf upload hheiden/mini-proteins-bench \
+  out/ala/explicit/curated.npz ala/explicit/curated.npz --repo-type=dataset
 ```
 
 **Self-check for step 5:** the alanine slow φ/ψ implied timescale should land in
@@ -81,6 +92,13 @@ not a data problem.
   rather than `.tpr` as `--top`.
 
 ## Reclaiming disk (persist, *then* delete)
+
+> **Done for alanine (2026-06-21)** following exactly this procedure — see "Where
+> we are". The pattern below is the template for the remaining residues.
+> Packaging that worked well: **gzip the verbose text before HF upload** (PDB
+> ~7.9×, force `.xvg` ~2.2×; 1.3 GB → 249 MB) and ship a `README.md` manifest
+> (provenance/units) alongside. Keep `validation.*` uncompressed so it renders on
+> the HF web UI. Don't hand-roll an `.npz` here — that's `benchmark/curate.py`'s job.
 
 Raw trajectories are scratch and regenerable — `validation.json` records the
 seeds + GROMACS version + git commit, so a run can be reproduced. Safe to delete
