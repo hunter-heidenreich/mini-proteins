@@ -5,3 +5,6 @@ out/
 mdout.mdp
 __pycache__/
 *.pyc
+# scratch run logs / notebook checkpoints
+*.log
+.ipynb_checkpoints/
