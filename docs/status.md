@@ -104,26 +104,34 @@ see `docs/cloud-run.md`; for commands see `CLAUDE.md`.
 generation + curation (all 6 pairs), and persist (git `results/` + HF
 `<id>/openmm-ff14sb/`). See the benchmark "Where we are" block above.
 
-**NEXT — ff03 cross-engine check (the one remaining shake-out step).** Confirm
-OpenMM reproduces the certified GROMACS ff03 alanine FES/populations — a
-*thermodynamics* check (separate from the ff14SB ground truth). On the conda env:
-```bash
-export MAMBA_ROOT_PREFIX=/root/micromamba
-PYRUN="/root/bin/micromamba run -n omm python"
-$PYRUN -m benchmark.simulate --residue ala --tier explicit \
-  --forcefield amber03.xml tip3p.xml --temperature 298 --friction 10 --ns 20 --replica 1
-$PYRUN -m benchmark.curate --residue ala --tier explicit   # writes to out/ala/explicit/
-# then compare its phi/psi FES + basin populations to results/ala/validation.json
-# (the GROMACS ff03 numbers). They should agree within sampling error.
-```
-NOTE: this curate would overwrite the ff14SB `out/ala/explicit/curated.npz`; run
-it in a scratch dir or rename outputs first if you want to keep both locally (the
-ff14SB version is already safe on HF).
+**ff03 cross-engine check — DONE (2026-06-22), see `results/ala/ff03_crosscheck.md`.**
+Engines agree: kinetics clean (OpenMM ff03 MSM slow timescale 300 ps ~ GROMACS
+g≈441 ps at matched friction), ff03 over-helical/bridge signature reproduced,
+populations consistent within ~1σ of the run's own error. CAVEAT: documented
+`--friction 10` is right for the kinetics match but wrong for the thermo check
+(crippled ψ sampling → 24 eff samples) — re-run at *low* friction for a tight
+populations comparison (populations are friction-independent).
+
+**>>> THE OPEN DECISION (resolve first next session): what is this dataset FOR? <<<**
+The persisted ff14SB shake-out retains **only φ/ψ(/ω) torsions + FES** (curate.py's
+design) — good as an *answer key* (FES/MSM/JSD/distribution benchmarking). It is
+NOT a coordinate/force ML set: `simulate.py` saves positions to DCD (since pruned)
+and **no forces at all** — yet the repo's top-line purpose (CLAUDE.md) is force
+extraction for ML potentials. If the benchmark must be a training set:
+- add a **force reporter** to `simulate.py` (`getState(getForces=True)`, solute only)
+- **keep solute-only positions** (strip water → 22 atoms, retention nearly free)
+- then regenerate ala/gly/pro (cheap) before scaling to 9 residues.
+If it's only an answer key, current artifacts suffice. **Decide before Phase 3.**
 
 **THEN — Phase 2+ (see `docs/benchmark.md`):** kinetics (adaptive-sampling/MSM),
 all 9 dipeptides with per-DOF convergence gating, replication milestones,
-tetrapeptides. Plus a `curate.py` improvement: proline-appropriate macro-states
+tetrapeptides. Plus a `curate.py` fix: proline-appropriate macro-states
 (ω cis/trans + ψ PPII/αR) so its convergence metrics are meaningful.
+
+**Ephemeral on this pod (gone after shutdown, all regenerable from committed
+code + seeds 1–3 + defaults):** raw DCDs (pruned), per-run `scalars.csv` energies,
+`meta.json`, `state.xml`, the ff03 run (`out/ala/explicit_ff03`), and the conda
+`omm` env + OpenCL ICD. Re-create the env per the infra note above.
 
 **Self-check (ala MSM):** the slow φ/ψ implied timescale lands ~tens-to-hundreds
 of ps (ff14SB/310 K/low-friction gave ≈82 ps explicit; GROMACS ff03/298 K gave
