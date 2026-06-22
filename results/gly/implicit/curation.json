@@ -1,0 +1,59 @@
+{
+  "residue": "gly",
+  "tier": "implicit",
+  "replicas": 3,
+  "frames_total": 600000,
+  "torsions": [
+    "phi",
+    "psi"
+  ],
+  "frame_stride_ps": 0.1,
+  "certification": {
+    "per_dof": {
+      "phi": {
+        "n_frames": 600000,
+        "statistical_inefficiency": 157.6,
+        "effective_samples": 3807,
+        "decorrelation_time": 5.4,
+        "stationarity_halves": 0.024
+      },
+      "psi": {
+        "n_frames": 600000,
+        "statistical_inefficiency": 501.1,
+        "effective_samples": 1197,
+        "decorrelation_time": 26.1,
+        "stationarity_halves": 0.016
+      }
+    },
+    "helical_extended_transitions_per_replica": [
+      890,
+      790,
+      855
+    ],
+    "transitions_per_ns_mean": 42.25,
+    "helical_fraction_mean": 0.1375,
+    "helical_fraction_std": 0.0022,
+    "phi_jsd_first_vs_second_half": 0.0008,
+    "phi_jsd_cross_replica": 0.0006
+  },
+  "observables": {
+    "fes_min_kcal": 0.0,
+    "fes_max_kcal": 4.33,
+    "msm": {
+      "timescales_frames": [
+        262.9917995088911,
+        144.6732670646196,
+        82.64430845268355,
+        69.65930892829117
+      ],
+      "n_states": 100,
+      "lagtime_frames": 200,
+      "timescales_ps": [
+        26.3,
+        14.5,
+        8.3,
+        7.0
+      ]
+    }
+  }
+}

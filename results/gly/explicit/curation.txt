@@ -1,0 +1,16 @@
+Curation report: gly / explicit
+============================================================
+replicas 3  frames 600000  stride 0.1 ps  torsions ['phi', 'psi']
+
+CONVERGENCE (per degree of freedom)
+  phi    g=   68.1  eff=   8805  decorr=3.3 ps  stat=0.034
+  psi    g=  625.7  eff=    958  decorr=34.2 ps  stat=0.056
+
+  helical<->extended transitions/ns  34.52 [722, 691, 658]
+  helical fraction (cross-replica)   0.125 +/- 0.0084
+  phi JSD half/half                  0.0015 (OK)
+  phi JSD cross-replica              0.0002
+
+OBSERVABLES
+  FES span 0..4.47 kcal/mol
+  MSM implied timescales (ps)  [35.0, 30.8, 17.7, 5.0] [100 states, lag 200]
